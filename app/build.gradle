@@ -37,6 +37,12 @@ android {
     kotlinOptions {
         jvmTarget = '11'
     }
+
+    buildFeatures {
+        dataBinding true
+        viewBinding true
+        buildConfig true
+    }
 }
 
 kapt {
@@ -56,4 +62,16 @@ dependencies {
 
     implementation libs.hilt.android
     kapt libs.hilt.compiler
+
+    // For Loading Images
+    implementation libs.glide
+
+    // Scaled dp to show same size view in different screen
+    implementation libs.sdp.android
+
+    // Swipe to refresh data/list
+    implementation libs.androidx.swiperefreshlayout
+
+    implementation libs.gson
+
 }
