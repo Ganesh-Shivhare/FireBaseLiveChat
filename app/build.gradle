@@ -74,4 +74,10 @@ dependencies {
 
     implementation libs.gson
 
+    // Firebase Authentication
+    implementation libs.firebase.auth.ktx
+    implementation libs.play.services.auth
+
+    implementation libs.androidx.lifecycle.viewmodel.ktx
+    implementation libs.kotlinx.coroutines.android
 }

@@ -19,9 +19,14 @@
         android:theme="@style/Theme.HiltFirebaseLiveChat"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-
         <activity
-            android:name=".MainActivity"
+            android:name=".chat.ui.ChatListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".login.ui.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".FirstActivity"
             android:configChanges="uiMode|screenSize"
             android:exported="true">
             <intent-filter>
@@ -31,4 +36,5 @@
             </intent-filter>
         </activity>
     </application>
+
 </manifest>
