@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/_5sdp"
+    android:layout_marginBottom="@dimen/_3sdp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clReceiver"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:id="@+id/llMessageReceiver"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_message_receive"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:paddingVertical="@dimen/_5sdp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/tvReceivedMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/medium"
+                android:gravity="center"
+                android:minWidth="@dimen/_35sdp"
+                android:minHeight="@dimen/_25sdp"
+                android:paddingEnd="@dimen/_10sdp"
+                android:text="Message"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_11sdp" />
+
+            <TextView
+                android:id="@+id/tvReceivedTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:fontFamily="@font/regular"
+                android:gravity="bottom"
+                android:text="09:15 Am"
+                android:textColor="@color/subTextColor"
+                android:textSize="@dimen/_9sdp" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="@dimen/_15sdp"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleX="-1.0"
+            android:src="@drawable/message_sender_bottom"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@+id/llMessageReceiver"
+            app:layout_constraintTop_toBottomOf="@+id/llMessageReceiver"
+            app:tint="#1A0170DA" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clSender"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:id="@+id/llMessageSender"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_message"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:paddingVertical="@dimen/_5sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/tvSendMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/medium"
+                android:gravity="center"
+                android:minWidth="@dimen/_35sdp"
+                android:minHeight="@dimen/_25sdp"
+                android:paddingEnd="@dimen/_10sdp"
+                android:text="Message"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_11sdp" />
+
+            <TextView
+                android:id="@+id/tvSendTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:fontFamily="@font/regular"
+                android:gravity="bottom"
+                android:text="09:15 Am"
+                android:textColor="@color/subTextColor"
+                android:textSize="@dimen/_9sdp" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="@dimen/_15sdp"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:src="@drawable/message_sender_bottom"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/llMessageSender"
+            app:layout_constraintTop_toBottomOf="@+id/llMessageSender"
+            app:tint="#1A0170DA" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

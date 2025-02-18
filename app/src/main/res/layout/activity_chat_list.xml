@@ -5,12 +5,12 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.ChatListActivity">
+    tools:context=".ui.activity.ChatListActivity">
 
     <LinearLayout
         android:id="@+id/llHeader"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_45sdp"
+        android:layout_height="?android:actionBarSize"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -30,10 +30,10 @@
 
         <ImageView
             android:id="@+id/ivSetting"
-            android:layout_width="@dimen/_45sdp"
-            android:layout_height="@dimen/_45sdp"
+            android:layout_width="wrap_content"
+            android:layout_height="?android:actionBarSize"
             android:adjustViewBounds="true"
-            android:padding="@dimen/_12sdp"
+            android:padding="@dimen/_10sdp"
             android:src="@drawable/ic_settings" />
     </LinearLayout>
 
@@ -46,11 +46,11 @@
         android:orientation="vertical"
         android:paddingTop="@dimen/_45sdp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:itemCount="5"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/llHeader"
+        tools:itemCount="5"
         tools:listitem="@layout/item_chat_list" />
 
     <LinearLayout

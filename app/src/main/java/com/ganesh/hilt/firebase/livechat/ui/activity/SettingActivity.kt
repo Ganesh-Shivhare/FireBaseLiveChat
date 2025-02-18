@@ -1,9 +1,9 @@
-package com.ganesh.hilt.firebase.livechat.ui
+package com.ganesh.hilt.firebase.livechat.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import com.ganesh.hilt.firebase.livechat.databinding.ActivitySettingBinding
+import com.ganesh.hilt.firebase.livechat.ui.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 

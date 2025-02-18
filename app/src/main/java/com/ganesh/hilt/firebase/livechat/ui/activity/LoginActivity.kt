@@ -1,4 +1,4 @@
-package com.ganesh.hilt.firebase.livechat.ui
+package com.ganesh.hilt.firebase.livechat.ui.activity
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -8,12 +8,9 @@ import android.text.InputType
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import com.ganesh.hilt.firebase.livechat.R
 import com.ganesh.hilt.firebase.livechat.databinding.ActivityLoginBinding
-import com.ganesh.hilt.firebase.livechat.viewModel.LoginViewModel
-import com.ganesh.hilt.firebase.livechat.viewModel.UserDetailViewModel
+import com.ganesh.hilt.firebase.livechat.ui.BaseActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -108,8 +105,6 @@ class LoginActivity : BaseActivity() {
                 Log.d("TAG_userData", "onCreate: " + it)
                 Toast.makeText(this, "Login Successful: $it", Toast.LENGTH_LONG).show()
                 loginViewModel.getUserData()
-//                startActivity(Intent(this@LoginActivity, ChatListActivity::class.java))
-//                finish()
             }.onFailure {
                 Toast.makeText(this, "Login Failed: ${it.message}", Toast.LENGTH_LONG).show()
             }
@@ -132,7 +127,9 @@ class LoginActivity : BaseActivity() {
                     startActivity(Intent(this@LoginActivity, ProfileSetupActivity::class.java))
                     finish()
                 } else {
-                    startActivity(Intent(this@LoginActivity, ChatListActivity::class.java))
+                    startActivity(Intent(
+                        this@LoginActivity, ChatListActivity::class.java
+                    ).apply { addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK) })
                     finish()
                 }
             }.onFailure {

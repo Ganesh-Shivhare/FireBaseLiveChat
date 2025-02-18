@@ -1,12 +1,17 @@
-package com.ganesh.hilt.firebase.livechat.ui
+package com.ganesh.hilt.firebase.livechat.ui.activity
 
 
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import com.bumptech.glide.Glide
+import com.ganesh.hilt.firebase.livechat.R
 import com.ganesh.hilt.firebase.livechat.data.User
 import com.ganesh.hilt.firebase.livechat.databinding.ActivityProfileSetupBinding
+import com.ganesh.hilt.firebase.livechat.ui.BaseActivity
+import com.ganesh.hilt.firebase.livechat.ui.dialog.AvatarSelectionDialog
+import com.ganesh.hilt.firebase.livechat.utils.getAvatarImageList
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -17,12 +22,35 @@ class ProfileSetupActivity : BaseActivity() {
         ActivityProfileSetupBinding.inflate(layoutInflater)
     }
     private lateinit var userData: User
+    private val avatarList by lazy { getAvatarImageList() }
+    private val avatarSelectionDialog by lazy {
+        AvatarSelectionDialog(this).apply {
+            setAvatarList(avatarList)
+            getSelectedAvatar {
+                selectedAvatar = it
+
+                Glide.with(binding.ivProfilePic).load(selectedAvatar)
+                    .placeholder(R.drawable.ic_profile).into(binding.ivProfilePic)
+                dismiss()
+            }
+        }
+    }
+    private var selectedAvatar: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
         binding.btnSaveProfile.setOnClickListener { saveUserProfile() }
+
+        binding.ivEdit.setOnClickListener {
+            avatarSelectionDialog.setSelectedAvatar(selectedAvatar)
+            avatarSelectionDialog.show()
+        }
+
+        selectedAvatar = avatarList.randomOrNull() ?: ""
+        Glide.with(binding.ivProfilePic).load(selectedAvatar)
+            .placeholder(R.drawable.ic_profile).into(binding.ivProfilePic)
 
         loginViewModel.getUserData()
 
@@ -48,7 +76,9 @@ class ProfileSetupActivity : BaseActivity() {
         userDetailViewModel.currentUserProfile.observe(this) { result ->
             result.onSuccess {
                 Log.d("TAG_dataInserted", "onSuccess: " + Gson().toJson(it))
-                startActivity(Intent(this@ProfileSetupActivity, ChatListActivity::class.java))
+                startActivity(Intent(
+                    this@ProfileSetupActivity, ChatListActivity::class.java
+                ).apply { addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK) })
                 finish()
             }.onFailure {
                 Log.d("TAG_dataInserted", "onFailure: " + it.message)
@@ -61,6 +91,7 @@ class ProfileSetupActivity : BaseActivity() {
         val email = binding.etEmail.text.toString()
         val phoneNumber = binding.etPhoneNumber.text.toString()
         val userId = if (::userData.isInitialized) userData.uid else ""
+        val avatarImagePath = selectedAvatar
         if (name.isEmpty()) {
             Toast.makeText(this, "Please enter user name", Toast.LENGTH_SHORT).show()
             return
@@ -74,7 +105,7 @@ class ProfileSetupActivity : BaseActivity() {
             return
         }
 
-        val user = User(userId, name, phoneNumber, email)
+        val user = User(userId, name, phoneNumber, email, avatarImagePath)
         userDetailViewModel.insertUserData(user)
     }
 }

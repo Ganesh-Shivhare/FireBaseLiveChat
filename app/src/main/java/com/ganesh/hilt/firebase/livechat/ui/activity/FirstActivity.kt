@@ -1,9 +1,10 @@
-package com.ganesh.hilt.firebase.livechat.ui
+package com.ganesh.hilt.firebase.livechat.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import com.ganesh.hilt.firebase.livechat.databinding.ActivityFirstBinding
+import com.ganesh.hilt.firebase.livechat.ui.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -40,7 +41,9 @@ class FirstActivity : BaseActivity() {
                     startActivity(Intent(this@FirstActivity, ProfileSetupActivity::class.java))
                     finish()
                 } else {
-                    startActivity(Intent(this@FirstActivity, ChatListActivity::class.java))
+                    startActivity(Intent(
+                        this@FirstActivity, ChatListActivity::class.java
+                    ).apply { addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK) })
                     finish()
                 }
             }.onFailure {
