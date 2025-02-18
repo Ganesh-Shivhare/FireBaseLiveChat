@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.ganesh.hilt.firebase.livechat.data.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -15,8 +16,11 @@ class UserDetailViewModel @Inject constructor(
     private val auth: FirebaseAuth, private val firestore: FirebaseFirestore
 ) : ViewModel() {
 
-    private val _searchResults = MutableLiveData<List<User>>()
-    val searchResults: LiveData<List<User>> get() = _searchResults
+    private val _searchResults = MutableLiveData<ArrayList<User>>()
+    val searchResults: LiveData<ArrayList<User>> get() = _searchResults
+
+    private val _userList = MutableLiveData<ArrayList<User>>()
+    val userList: LiveData<ArrayList<User>> get() = _userList
 
     private val _addUserProfile = MutableLiveData<Result<Boolean>>()
     val addUserProfile: LiveData<Result<Boolean>> get() = _addUserProfile
@@ -25,11 +29,48 @@ class UserDetailViewModel @Inject constructor(
     val currentUserProfile: LiveData<Result<User>> get() = _currentUserProfile
 
     fun searchUsers(query: String) {
-        firestore.collection("users").whereEqualTo("phoneNumber", query).get()
-            .addOnSuccessListener { result ->
-                val users = result.documents.mapNotNull { it.toObject(User::class.java) }
-                _searchResults.postValue(users)
+        val users = ArrayList<User>()
+
+        val userList = _userList.value
+        if (_userList.value == null || userList?.isEmpty() == true) {
+            firestore.collection("users").get().addOnSuccessListener { result ->
+                Log.d("TAG_searchResults", "addOnSuccessListener: " + result.documents)
+                result.documents.forEach {
+                    it.toObject(User::class.java)?.let { it1 -> users.add(it1) }
+                }
+                _userList.postValue(users)
+
+                val searchUserList = ArrayList<User>()
+                users.forEach {
+                    if (it.email.contains(query, true) || it.phoneNumber.contains(
+                            query,
+                            true
+                        ) || it.name.contains(query, true)
+                    ) {
+                        searchUserList.add(it)
+                    }
+                }
+
+                _searchResults.postValue(searchUserList)
+            }.addOnFailureListener {
+                Log.d("TAG_searchResults", "addOnFailureListener: " + it.message)
             }
+        } else {
+            val searchUserList = ArrayList<User>()
+            userList?.forEach {
+                Log.d("TAG_searchResults", "else user list: " + Gson().toJson(it))
+                if (it.email.contains(query, true) || it.phoneNumber.contains(
+                        query,
+                        true
+                    ) || it.name.contains(query, true)
+                ) {
+                    Log.d("TAG_searchResults", "addData: " + Gson().toJson(it))
+                    searchUserList.add(it)
+                }
+            }
+
+            _searchResults.postValue(searchUserList)
+        }
     }
 
     fun isUserDataAvailable() {

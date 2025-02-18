@@ -16,6 +16,10 @@ class FirstActivity : BaseActivity() {
         setContentView(binding.root)
 
         loginViewModel.isLoggedIn()
+        setupObservers()
+    }
+
+    private fun setupObservers() {
         loginViewModel.isLoggedIn.observe(this) { result ->
             result.onSuccess {
                 Toast.makeText(this, "Login Successful: $it", Toast.LENGTH_LONG).show()
