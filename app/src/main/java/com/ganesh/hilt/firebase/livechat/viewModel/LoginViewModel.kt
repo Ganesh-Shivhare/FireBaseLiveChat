@@ -1,12 +1,12 @@
-package com.ganesh.hilt.firebase.livechat.login.ui
+package com.ganesh.hilt.firebase.livechat.viewModel
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ganesh.hilt.firebase.livechat.login.repo.FirebaseAuthRepository
-import com.google.firebase.auth.PhoneAuthCredential
+import com.ganesh.hilt.firebase.livechat.data.User
+import com.ganesh.hilt.firebase.livechat.repo.FirebaseAuthRepository
 import com.google.firebase.auth.PhoneAuthProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -22,15 +22,12 @@ class LoginViewModel @Inject constructor(private val repository: FirebaseAuthRep
     private val _isLoggedIn = MutableLiveData<Result<Boolean>>()
     val isLoggedIn: LiveData<Result<Boolean>> get() = _isLoggedIn
 
+    private val _userData = MutableLiveData<Result<User>>()
+    val userData: LiveData<Result<User>> get() = _userData
+
     fun loginWithEmail(email: String, password: String) {
         viewModelScope.launch {
             _authResult.postValue(repository.signInWithEmail(email, password))
-        }
-    }
-
-    fun loginWithPhone(credential: PhoneAuthCredential) {
-        viewModelScope.launch {
-            _authResult.postValue(repository.signInWithPhoneCredential(credential))
         }
     }
 
@@ -60,6 +57,12 @@ class LoginViewModel @Inject constructor(private val repository: FirebaseAuthRep
     fun verifyOtp(otp: String) {
         viewModelScope.launch {
             _authResult.postValue(repository.verifyOtp(otp))
+        }
+    }
+
+    fun getUserData() {
+        viewModelScope.launch {
+            _userData.postValue(repository.getUserData())
         }
     }
 

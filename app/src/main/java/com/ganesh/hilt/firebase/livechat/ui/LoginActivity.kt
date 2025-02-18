@@ -1,4 +1,4 @@
-package com.ganesh.hilt.firebase.livechat.login.ui
+package com.ganesh.hilt.firebase.livechat.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -11,8 +11,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.ganesh.hilt.firebase.livechat.R
-import com.ganesh.hilt.firebase.livechat.chat.ui.ChatListActivity
 import com.ganesh.hilt.firebase.livechat.databinding.ActivityLoginBinding
+import com.ganesh.hilt.firebase.livechat.viewModel.LoginViewModel
+import com.ganesh.hilt.firebase.livechat.viewModel.UserDetailViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -29,8 +30,9 @@ class LoginActivity : AppCompatActivity() {
     private val binding by lazy { ActivityLoginBinding.inflate(layoutInflater) }
     private val loginViewModel: LoginViewModel by viewModels()
     private var resendEnabled = true
-    private lateinit var countDownTimer: CountDownTimer
+    private val userDetailViewModel: UserDetailViewModel by viewModels()
 
+    private lateinit var countDownTimer: CountDownTimer
     private lateinit var googleSignInClient: GoogleSignInClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -99,13 +101,44 @@ class LoginActivity : AppCompatActivity() {
             binding.etPassword.setSelection(cursorPosition)
         }
 
+        setupObservers()
+    }
+
+    private fun setupObservers() {
         loginViewModel.authResult.observe(this) { result ->
             result.onSuccess {
+                Log.d("TAG_userData", "onCreate: " + it)
                 Toast.makeText(this, "Login Successful: $it", Toast.LENGTH_LONG).show()
-                startActivity(Intent(this@LoginActivity, ChatListActivity::class.java))
-                finish()
+                loginViewModel.getUserData()
+//                startActivity(Intent(this@LoginActivity, ChatListActivity::class.java))
+//                finish()
             }.onFailure {
                 Toast.makeText(this, "Login Failed: ${it.message}", Toast.LENGTH_LONG).show()
+            }
+        }
+
+        loginViewModel.userData.observe(this) { result ->
+            result.onSuccess {
+                Log.d("TAG_userData", "onCreate: " + it)
+                Toast.makeText(this, "User Data: $it", Toast.LENGTH_LONG).show()
+
+                userDetailViewModel.isUserDataAvailable()
+            }.onFailure {
+                Toast.makeText(this, "Login Failed: ${it.message}", Toast.LENGTH_LONG).show()
+            }
+        }
+
+        userDetailViewModel.addUserProfile.observe(this) { result ->
+            result.onSuccess {
+                if (it) {
+                    startActivity(Intent(this@LoginActivity, ProfileSetupActivity::class.java))
+                    finish()
+                } else {
+                    startActivity(Intent(this@LoginActivity, ChatListActivity::class.java))
+                    finish()
+                }
+            }.onFailure {
+
             }
         }
     }

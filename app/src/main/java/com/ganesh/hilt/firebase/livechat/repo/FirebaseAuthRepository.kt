@@ -1,6 +1,7 @@
-package com.ganesh.hilt.firebase.livechat.login.repo
+package com.ganesh.hilt.firebase.livechat.repo
 
 import androidx.appcompat.app.AppCompatActivity
+import com.ganesh.hilt.firebase.livechat.data.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.PhoneAuthCredential
@@ -43,15 +44,6 @@ class FirebaseAuthRepository @Inject constructor(private val auth: FirebaseAuth)
         }
     }
 
-    // Is Signed In
-    fun isUserLoggedIn(): Result<Boolean> {
-        return try {
-            Result.success(auth.currentUser != null)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
     private var verificationId: String? = null
 
     fun sendVerificationCode(
@@ -80,5 +72,27 @@ class FirebaseAuthRepository @Inject constructor(private val auth: FirebaseAuth)
 
     fun storeVerificationId(id: String) {
         verificationId = id
+    }
+
+    // Is Signed In
+    fun isUserLoggedIn(): Result<Boolean> {
+        return try {
+            Result.success(auth.currentUser != null)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    fun getUserData(): Result<User>? {
+        return try {
+            val userData = User()
+            userData.email = auth.currentUser?.email ?: ""
+            userData.phoneNumber = auth.currentUser?.phoneNumber ?: ""
+            userData.uid = auth.currentUser?.uid ?: ""
+
+            Result.success(userData)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <EditText
+            android:id="@+id/etName"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:background="@drawable/edt_selector"
+            android:fontFamily="@font/regular"
+            android:hint="Enter User Name"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:textColor="@color/white"
+            android:textColorHint="@color/subTextColor"
+            android:textSize="@dimen/_12sdp" />
+
+        <EditText
+            android:id="@+id/etPhoneNumber"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:background="@drawable/edt_selector"
+            android:fontFamily="@font/regular"
+            android:hint="Enter Phone Number"
+            android:inputType="phone"
+            android:maxLength="15"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:textColor="@color/white"
+            android:textColorHint="@color/subTextColor"
+            android:textSize="@dimen/_12sdp" />
+
+        <EditText
+            android:id="@+id/etEmail"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:background="@drawable/edt_selector"
+            android:fontFamily="@font/regular"
+            android:hint="Enter Email Address"
+            android:inputType="textEmailAddress"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:textColor="@color/white"
+            android:textColorHint="@color/subTextColor"
+            android:textSize="@dimen/_12sdp" />
+
+        <Button
+            android:id="@+id/btnSaveProfile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Save Profile" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

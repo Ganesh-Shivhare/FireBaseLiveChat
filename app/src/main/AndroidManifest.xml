@@ -20,13 +20,16 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".chat.ui.ChatListActivity"
+            android:name=".ui.ProfileSetupActivity"
             android:exported="false" />
         <activity
-            android:name=".login.ui.LoginActivity"
+            android:name=".ui.ChatListActivity"
             android:exported="false" />
         <activity
-            android:name=".FirstActivity"
+            android:name=".ui.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.FirstActivity"
             android:configChanges="uiMode|screenSize"
             android:exported="true">
             <intent-filter>
