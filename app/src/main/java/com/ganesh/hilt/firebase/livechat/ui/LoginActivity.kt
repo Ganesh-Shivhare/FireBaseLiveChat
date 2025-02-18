@@ -25,12 +25,10 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 @SuppressLint("SetTextI18n")
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : BaseActivity() {
 
     private val binding by lazy { ActivityLoginBinding.inflate(layoutInflater) }
-    private val loginViewModel: LoginViewModel by viewModels()
     private var resendEnabled = true
-    private val userDetailViewModel: UserDetailViewModel by viewModels()
 
     private lateinit var countDownTimer: CountDownTimer
     private lateinit var googleSignInClient: GoogleSignInClient

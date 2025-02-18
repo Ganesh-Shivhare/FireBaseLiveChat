@@ -1,13 +1,13 @@
 package com.ganesh.hilt.firebase.livechat.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.ganesh.hilt.firebase.livechat.databinding.ActivityChatListBinding
 
-class ChatListActivity : AppCompatActivity() {
+class ChatListActivity : BaseActivity() {
 
     private val binding: ActivityChatListBinding by lazy {
         ActivityChatListBinding.inflate(layoutInflater)
@@ -39,6 +39,11 @@ class ChatListActivity : AppCompatActivity() {
 
                 }
             })
+
+            ivSetting.setOnClickListener {
+                startActivity(Intent(this@ChatListActivity, SettingActivity::class.java))
+            }
         }
+
     }
 }

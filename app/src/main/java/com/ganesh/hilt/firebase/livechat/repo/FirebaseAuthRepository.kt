@@ -4,12 +4,12 @@ import androidx.appcompat.app.AppCompatActivity
 import com.ganesh.hilt.firebase.livechat.data.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import kotlinx.coroutines.tasks.await
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+
 
 class FirebaseAuthRepository @Inject constructor(private val auth: FirebaseAuth) {
 
@@ -17,16 +17,6 @@ class FirebaseAuthRepository @Inject constructor(private val auth: FirebaseAuth)
     suspend fun signInWithEmail(email: String, password: String): Result<String> {
         return try {
             val result = auth.signInWithEmailAndPassword(email, password).await()
-            Result.success(result.user?.uid ?: "Unknown User")
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    // Phone Sign In
-    suspend fun signInWithPhoneCredential(credential: PhoneAuthCredential): Result<String> {
-        return try {
-            val result = auth.signInWithCredential(credential).await()
             Result.success(result.user?.uid ?: "Unknown User")
         } catch (e: Exception) {
             Result.failure(e)
@@ -51,12 +41,10 @@ class FirebaseAuthRepository @Inject constructor(private val auth: FirebaseAuth)
         callbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks,
         activity: AppCompatActivity
     ) {
-        val options = PhoneAuthOptions.newBuilder(auth)
-            .setPhoneNumber(phoneNumber)
+        val options = PhoneAuthOptions.newBuilder(auth).setPhoneNumber(phoneNumber)
             .setTimeout(60L, TimeUnit.SECONDS)
             .setActivity(activity) // Set activity inside ViewModel
-            .setCallbacks(callbacks)
-            .build()
+            .setCallbacks(callbacks).build()
         PhoneAuthProvider.verifyPhoneNumber(options)
     }
 
@@ -94,5 +82,11 @@ class FirebaseAuthRepository @Inject constructor(private val auth: FirebaseAuth)
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+    fun logoutCurrentUser(): Result<Boolean> {
+        auth.signOut()
+
+        return Result.success(auth.currentUser != null)
     }
 }

@@ -43,9 +43,6 @@ class LoginViewModel @Inject constructor(private val repository: FirebaseAuthRep
         }
     }
 
-    private val _verificationId = MutableLiveData<String>()
-    val verificationId: LiveData<String> get() = _verificationId
-
     fun sendVerificationCode(
         phoneNumber: String,
         callbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks,
@@ -68,5 +65,11 @@ class LoginViewModel @Inject constructor(private val repository: FirebaseAuthRep
 
     fun storeVerificationId(id: String) {
         repository.storeVerificationId(id)
+    }
+
+    fun logoutUser() {
+        viewModelScope.launch {
+            _isLoggedIn.postValue(repository.logoutCurrentUser())
+        }
     }
 }

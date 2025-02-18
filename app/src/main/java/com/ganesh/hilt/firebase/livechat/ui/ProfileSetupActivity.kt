@@ -5,23 +5,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import com.ganesh.hilt.firebase.livechat.data.User
 import com.ganesh.hilt.firebase.livechat.databinding.ActivityProfileSetupBinding
-import com.ganesh.hilt.firebase.livechat.viewModel.LoginViewModel
-import com.ganesh.hilt.firebase.livechat.viewModel.UserDetailViewModel
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ProfileSetupActivity : AppCompatActivity() {
+class ProfileSetupActivity : BaseActivity() {
 
     private val binding: ActivityProfileSetupBinding by lazy {
         ActivityProfileSetupBinding.inflate(layoutInflater)
     }
-    private val userDetailViewModel: UserDetailViewModel by viewModels()
-    private val loginViewModel: LoginViewModel by viewModels()
     private lateinit var userData: User
 
     override fun onCreate(savedInstanceState: Bundle?) {
