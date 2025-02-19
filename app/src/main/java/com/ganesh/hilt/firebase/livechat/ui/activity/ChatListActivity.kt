@@ -7,12 +7,13 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProvider
 import com.ganesh.hilt.firebase.livechat.databinding.ActivityChatListBinding
 import com.ganesh.hilt.firebase.livechat.ui.BaseActivity
 import com.ganesh.hilt.firebase.livechat.ui.adapter.UserListAdapter
 import com.ganesh.hilt.firebase.livechat.utils.hideKeyboard
+import com.ganesh.hilt.firebase.livechat.viewModel.FirebaseViewModel
 import com.google.gson.Gson
-import java.util.Collections
 
 class ChatListActivity : BaseActivity() {
 
@@ -21,6 +22,7 @@ class ChatListActivity : BaseActivity() {
     }
     private val searchListAdapter: UserListAdapter by lazy { UserListAdapter(this) }
     private val userListAdapter: UserListAdapter by lazy { UserListAdapter(this) }
+    private lateinit var viewModel: FirebaseViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +30,13 @@ class ChatListActivity : BaseActivity() {
 
         initView()
         setupObservers()
+
+        viewModel = ViewModelProvider(this)[FirebaseViewModel::class.java]
+        viewModel.fcmToken.observe(this) { token ->
+            Log.d("MainActivity", "FCM Token: $token")
+        }
+
+        viewModel.fetchToken()
     }
 
     private fun setupObservers() {

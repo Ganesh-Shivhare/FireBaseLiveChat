@@ -13,12 +13,20 @@ class UserRepository @Inject constructor(
 ) {
 
     fun getAllUsers(onResult: (ArrayList<User>) -> Unit) {
-        val users = ArrayList<User>()
-        firestore.collection("users").get().addOnSuccessListener { result ->
-            result.documents.forEach {
-                it.toObject(User::class.java)?.let { userData -> users.add(userData) }
+        firestore.collection("users").addSnapshotListener { snapshots, error ->
+            if (error != null) {
+                Log.e("Firestore", "Error listening for chats", error)
+                return@addSnapshotListener
             }
-            onResult(users)
+
+            val users = ArrayList<User>()
+            if (snapshots != null && !snapshots.isEmpty) {
+                for (document in snapshots.documents) {
+                    document.toObject(User::class.java)?.let { userData -> users.add(userData) }
+                }
+
+                onResult(users)
+            }
         }
     }
 
@@ -133,20 +141,20 @@ class UserRepository @Inject constructor(
 
         firestore.collection("fireChats").addSnapshotListener { snapshots, error ->
             if (error != null) {
-                Log.e("Firestore", "Error listening for chats", error)
+                Log.e("TAG_currentUsers", "Error listening for chats", error)
                 return@addSnapshotListener
             }
 
             if (snapshots != null && !snapshots.isEmpty) {
                 val userChatList = ArrayList<User>()
-                for (document in snapshots.documents) {
+
+                snapshots.documents.forEachIndexed { index, document ->
                     val receiverId = document.id.replace(uid, "").replace("-", "")
                     Log.d("TAG_currentUsers", "Found chat: ${receiverId}")
 
                     getUserById(receiverId) { userData ->
                         chatRepository.getMessages(receiverId) {
                             userData.chatMessage = it.last()
-                            Log.d("TAG_currentUsers", "Found chat: ${userData.chatMessage.message}")
                             userChatList.add(userData)
                             result(userChatList)
                         }

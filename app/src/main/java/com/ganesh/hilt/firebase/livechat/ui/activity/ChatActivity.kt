@@ -13,7 +13,6 @@ import com.ganesh.hilt.firebase.livechat.data.User
 import com.ganesh.hilt.firebase.livechat.databinding.ActivityChatBinding
 import com.ganesh.hilt.firebase.livechat.ui.BaseActivity
 import com.ganesh.hilt.firebase.livechat.ui.adapter.MessageListAdapter
-import com.ganesh.hilt.firebase.livechat.utils.hideKeyboard
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -74,7 +73,9 @@ class ChatActivity : BaseActivity() {
                     return@setOnClickListener
                 }
 
-                rvChats.smoothScrollToPosition(messageListAdapter.itemCount - 1)
+                if (messageListAdapter.itemCount > 0) {
+                    rvChats.smoothScrollToPosition(messageListAdapter.itemCount - 1)
+                }
                 chatViewModel.sendMessage(receiverUserData.uid, message)
 
                 etMessage.setText("")
@@ -82,7 +83,9 @@ class ChatActivity : BaseActivity() {
             }
 
             ivScrollToBottom.setOnClickListener {
-                rvChats.smoothScrollToPosition(messageListAdapter.itemCount - 1)
+                if (messageListAdapter.itemCount > 0) {
+                    rvChats.smoothScrollToPosition(messageListAdapter.itemCount - 1)
+                }
             }
 
             rvChats.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -116,7 +119,9 @@ class ChatActivity : BaseActivity() {
             messageListAdapter.updateUserList(it)
 
             if (isUserAtBottom) {
-                binding.rvChats.smoothScrollToPosition(it.size - 1)
+                if (messageListAdapter.itemCount > 0) {
+                    binding.rvChats.smoothScrollToPosition(it.size - 1)
+                }
             }
         }
     }
