@@ -7,7 +7,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
 
 class UserRepository @Inject constructor(
-    private val auth: FirebaseAuth, private val firestore: FirebaseFirestore
+    private val auth: FirebaseAuth,
+    private val firestore: FirebaseFirestore,
+    private val chatRepository: ChatRepository
 ) {
 
     fun getAllUsers(onResult: (ArrayList<User>) -> Unit) {
@@ -42,6 +44,25 @@ class UserRepository @Inject constructor(
             }
 
             onResult(searchUserList)
+        }
+    }
+
+    fun getUserById(uId: String, onResult: (User) -> Unit) {
+        val users = ArrayList<User>()
+
+        getAllUsers {
+            Log.d("TAG_searchResults", "addOnSuccessListener: " + it.size)
+            it.forEach { userData ->
+                users.add(userData)
+            }
+
+            users.forEach { userData ->
+                if (userData.uid != auth.currentUser?.uid) {
+                    if (userData.uid.contains(uId)) {
+                        onResult(userData)
+                    }
+                }
+            }
         }
     }
 
@@ -104,6 +125,38 @@ class UserRepository @Inject constructor(
             result(Result.success(userModel))
         }.addOnFailureListener {
             result(Result.failure(it))
+        }
+    }
+
+    fun getCurrentlyChatsUsers(result: (ArrayList<User>) -> Unit) {
+        val uid = auth.currentUser?.uid ?: return
+
+        firestore.collection("fireChats").addSnapshotListener { snapshots, error ->
+            if (error != null) {
+                Log.e("Firestore", "Error listening for chats", error)
+                return@addSnapshotListener
+            }
+
+            if (snapshots != null && !snapshots.isEmpty) {
+                val userChatList = ArrayList<User>()
+                for (document in snapshots.documents) {
+                    val receiverId = document.id.replace(uid, "").replace("-", "")
+                    Log.d("TAG_currentUsers", "Found chat: ${receiverId}")
+
+                    getUserById(receiverId) { userData ->
+                        chatRepository.getMessages(receiverId) {
+                            userData.chatMessage = it.last()
+                            Log.d("TAG_currentUsers", "Found chat: ${userData.chatMessage.message}")
+                            userChatList.add(userData)
+                            result(userChatList)
+                        }
+                    }
+                    Log.d("ChatUpdate", "Chat ID: ${document.id}")
+                }
+                // Handle the updated chat list
+            } else {
+                Log.d("ChatUpdate", "No chats available")
+            }
         }
     }
 }

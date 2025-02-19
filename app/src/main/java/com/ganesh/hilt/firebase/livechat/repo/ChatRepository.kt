@@ -15,13 +15,21 @@ class ChatRepository @Inject constructor(
             ChatMessage(senderId, receiverId, messageText, System.currentTimeMillis())
 
         val chatId = if (senderId < receiverId) "$senderId-$receiverId" else "$receiverId-$senderId"
-        firestore.collection("chats").document(chatId).collection("messages").add(chatMessage)
+
+        val user = hashMapOf(
+            "temp" to System.currentTimeMillis(),
+        )
+
+        val temp = firestore.collection("fireChats").document(chatId)
+        temp.set(user)
+        temp.collection("messages").add(chatMessage)
     }
 
     fun getMessages(receiverId: String, onMessagesReceived: (List<ChatMessage>) -> Unit) {
         val senderId = auth.currentUser?.uid ?: return
         val chatId = if (senderId < receiverId) "$senderId-$receiverId" else "$receiverId-$senderId"
-        firestore.collection("chats").document(chatId).collection("messages").orderBy("timestamp")
+        firestore.collection("fireChats").document(chatId).collection("messages")
+            .orderBy("timestamp")
             .addSnapshotListener { snapshot, _ ->
                 val messages =
                     snapshot?.documents?.mapNotNull { it.toObject(ChatMessage::class.java) }

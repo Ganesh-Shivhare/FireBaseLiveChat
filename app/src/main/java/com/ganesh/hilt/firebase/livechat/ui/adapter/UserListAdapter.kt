@@ -13,6 +13,7 @@ import com.ganesh.hilt.firebase.livechat.data.User
 import com.ganesh.hilt.firebase.livechat.databinding.ItemChatListBinding
 import com.ganesh.hilt.firebase.livechat.ui.BaseActivity
 import com.ganesh.hilt.firebase.livechat.ui.activity.ChatActivity
+import com.ganesh.hilt.firebase.livechat.utils.formatTimeFromMillis
 import com.google.gson.Gson
 
 class UserListAdapter(private val baseActivity: BaseActivity) :
@@ -33,12 +34,14 @@ class UserListAdapter(private val baseActivity: BaseActivity) :
         val user = userList[position]
         holder.binding.tvUserName.text = user.name
 
-        Log.d("TAG_avatarImagePath", "onBindViewHolder: " + user.avatarImagePath)
+        Log.d("TAG_avatarImagePath", "onBindViewHolder: " + user.chatMessage.message)
 
         Glide.with(holder.binding.ivProfilePic).load(user.avatarImagePath)
             .placeholder(R.drawable.ic_profile).into(holder.binding.ivProfilePic)
 
-        holder.binding.llChatData.isVisible = false
+        holder.binding.llChatData.isVisible = user.chatMessage.message.isNotEmpty()
+        holder.binding.tvMessage.text = user.chatMessage.message
+        holder.binding.tvLastSeen.text = user.chatMessage.timestamp.formatTimeFromMillis()
 
         holder.itemView.setOnClickListener {
             val intent = Intent(baseActivity, ChatActivity::class.java)

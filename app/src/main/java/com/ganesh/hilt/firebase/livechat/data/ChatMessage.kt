@@ -1,8 +1,11 @@
 package com.ganesh.hilt.firebase.livechat.data
 
+import com.google.gson.annotations.Expose
+import com.google.gson.annotations.SerializedName
+
 data class ChatMessage(
-    val senderId: String = "",
-    val receiverId: String = "",
-    val message: String = "",
-    val timestamp: Long = System.currentTimeMillis()
+    @SerializedName("senderId") @Expose val senderId: String = "",
+    @SerializedName("receiverId") @Expose val receiverId: String = "",
+    @SerializedName("message") @Expose val message: String = "",
+    @SerializedName("timestamp") @Expose val timestamp: Long = System.currentTimeMillis()
 )

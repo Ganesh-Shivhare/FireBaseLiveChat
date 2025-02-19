@@ -11,7 +11,6 @@ import com.ganesh.hilt.firebase.livechat.databinding.ActivityChatListBinding
 import com.ganesh.hilt.firebase.livechat.ui.BaseActivity
 import com.ganesh.hilt.firebase.livechat.ui.adapter.UserListAdapter
 import com.ganesh.hilt.firebase.livechat.utils.hideKeyboard
-import com.google.android.material.internal.ViewUtils
 import com.google.gson.Gson
 
 class ChatListActivity : BaseActivity() {
@@ -19,6 +18,7 @@ class ChatListActivity : BaseActivity() {
     private val binding: ActivityChatListBinding by lazy {
         ActivityChatListBinding.inflate(layoutInflater)
     }
+    private val searchListAdapter: UserListAdapter by lazy { UserListAdapter(this) }
     private val userListAdapter: UserListAdapter by lazy { UserListAdapter(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,13 +30,25 @@ class ChatListActivity : BaseActivity() {
     }
 
     private fun setupObservers() {
+        userDetailViewModel.getCurrentlyChatsUsers()
+
         userDetailViewModel.searchResults.observe(this) { userList ->
             Log.d("TAG_searchResults", "setupObservers: " + userList.size)
             userList.forEach {
                 Log.d("TAG_searchResults", "setupObservers: " + Gson().toJson(it))
             }
-            binding.rvChatList.isVisible = userList.isNotEmpty()
-            userListAdapter.updateUserList(userList)
+            binding.rvChatList.isVisible =
+                userList.isNotEmpty() || binding.etSearch.text.trim().isEmpty()
+            searchListAdapter.updateUserList(userList)
+        }
+
+        userDetailViewModel.currentlyChatsUsers.observe(this) { chatList ->
+            Log.d("TAG_currentUsers", "setupObservers: " + chatList.size)
+            chatList.forEach {
+                Log.d("TAG_currentUsers", "setupObservers: " + it.chatMessage.message)
+            }
+
+            userListAdapter.updateUserList(chatList)
         }
     }
 
@@ -44,7 +56,8 @@ class ChatListActivity : BaseActivity() {
     private fun initView() {
         with(binding) {
             // initSearch Recycler
-            rvSearchList.adapter = userListAdapter
+            rvSearchList.adapter = searchListAdapter
+            rvChatList.adapter = userListAdapter
 
             etSearch.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(

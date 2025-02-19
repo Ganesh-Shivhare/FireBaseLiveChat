@@ -21,6 +21,9 @@ class UserDetailViewModel @Inject constructor(
     private val _userList = MutableLiveData<ArrayList<User>>()
     val userList: LiveData<ArrayList<User>> get() = _userList
 
+    private val _currentlyChatsUsers = MutableLiveData<ArrayList<User>>()
+    val currentlyChatsUsers: LiveData<ArrayList<User>> get() = _currentlyChatsUsers
+
     private val _addUserProfile = MutableLiveData<Result<Boolean>>()
     val addUserProfile: LiveData<Result<Boolean>> get() = _addUserProfile
 
@@ -56,6 +59,14 @@ class UserDetailViewModel @Inject constructor(
         viewModelScope.launch {
             repository.insertUserProfileData(userModel) {
                 _currentUserProfile.postValue(it)
+            }
+        }
+    }
+
+    fun getCurrentlyChatsUsers() {
+        viewModelScope.launch {
+            repository.getCurrentlyChatsUsers {
+                _currentlyChatsUsers.postValue(it)
             }
         }
     }
