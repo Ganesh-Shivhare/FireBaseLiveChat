@@ -12,6 +12,7 @@ import com.ganesh.hilt.firebase.livechat.ui.BaseActivity
 import com.ganesh.hilt.firebase.livechat.ui.adapter.UserListAdapter
 import com.ganesh.hilt.firebase.livechat.utils.hideKeyboard
 import com.google.gson.Gson
+import java.util.Collections
 
 class ChatListActivity : BaseActivity() {
 
@@ -38,7 +39,7 @@ class ChatListActivity : BaseActivity() {
                 Log.d("TAG_searchResults", "setupObservers: " + Gson().toJson(it))
             }
             binding.rvChatList.isVisible =
-                userList.isNotEmpty() || binding.etSearch.text.trim().isEmpty()
+                userList.isNotEmpty() && binding.etSearch.text.trim().isEmpty()
             searchListAdapter.updateUserList(userList)
         }
 
@@ -46,6 +47,10 @@ class ChatListActivity : BaseActivity() {
             Log.d("TAG_currentUsers", "setupObservers: " + chatList.size)
             chatList.forEach {
                 Log.d("TAG_currentUsers", "setupObservers: " + it.chatMessage.message)
+            }
+
+            chatList.sortWith { chat1, chat2 ->
+                chat2.chatMessage.timestamp.compareTo(chat1.chatMessage.timestamp) // Descending order
             }
 
             userListAdapter.updateUserList(chatList)

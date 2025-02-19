@@ -5,6 +5,8 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.ganesh.hilt.firebase.livechat.R
 import com.ganesh.hilt.firebase.livechat.data.User
@@ -17,6 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ChatActivity : BaseActivity() {
+    private var isUserAtBottom: Boolean = true
     private val binding by lazy { ActivityChatBinding.inflate(layoutInflater) }
     private lateinit var currentUserData: User
     private lateinit var receiverUserData: User
@@ -71,11 +74,30 @@ class ChatActivity : BaseActivity() {
                     return@setOnClickListener
                 }
 
+                rvChats.smoothScrollToPosition(messageListAdapter.itemCount - 1)
                 chatViewModel.sendMessage(receiverUserData.uid, message)
 
                 etMessage.setText("")
-                etMessage.hideKeyboard()
+//                etMessage.hideKeyboard()
             }
+
+            ivScrollToBottom.setOnClickListener {
+                rvChats.smoothScrollToPosition(messageListAdapter.itemCount - 1)
+            }
+
+            rvChats.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+
+                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                    val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
+                    val totalItemCount = layoutManager.itemCount
+
+                    // Check if the user is at the bottom
+                    isUserAtBottom = lastVisibleItemPosition == totalItemCount - 1
+                    ivScrollToBottom.isVisible = !isUserAtBottom
+                }
+            })
         }
     }
 
@@ -92,6 +114,10 @@ class ChatActivity : BaseActivity() {
         chatViewModel.getMessages(receiverUserData.uid) {
             Log.d("TAG_message", "setupObservers: " + it.size)
             messageListAdapter.updateUserList(it)
+
+            if (isUserAtBottom) {
+                binding.rvChats.smoothScrollToPosition(it.size - 1)
+            }
         }
     }
 }

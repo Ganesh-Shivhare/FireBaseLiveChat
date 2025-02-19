@@ -36,10 +36,22 @@ class ProfileSetupActivity : BaseActivity() {
         }
     }
     private var selectedAvatar: String = ""
+    private var updateUserProfile: User? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        val updateUserProfileData = intent.getStringExtra("updateUserProfile").toString()
+        if (updateUserProfileData.isNotEmpty()) {
+            updateUserProfile = Gson().fromJson(updateUserProfileData, User::class.java)
+
+            binding.btnSaveProfile.text = "Update Profile"
+        } else {
+            selectedAvatar = avatarList.randomOrNull() ?: ""
+            Glide.with(binding.ivProfilePic).load(selectedAvatar)
+                .placeholder(R.drawable.ic_profile).into(binding.ivProfilePic)
+        }
 
         binding.btnSaveProfile.setOnClickListener { saveUserProfile() }
 
@@ -47,10 +59,6 @@ class ProfileSetupActivity : BaseActivity() {
             avatarSelectionDialog.setSelectedAvatar(selectedAvatar)
             avatarSelectionDialog.show()
         }
-
-        selectedAvatar = avatarList.randomOrNull() ?: ""
-        Glide.with(binding.ivProfilePic).load(selectedAvatar)
-            .placeholder(R.drawable.ic_profile).into(binding.ivProfilePic)
 
         loginViewModel.getUserData()
 
@@ -60,14 +68,27 @@ class ProfileSetupActivity : BaseActivity() {
     private fun setupObservers() {
         loginViewModel.userData.observe(this) { result ->
             result.onSuccess {
-                userData = it
+                if (updateUserProfile != null) {
+                    binding.etPhoneNumber.setText(updateUserProfile?.phoneNumber)
+                    binding.etName.setText(updateUserProfile?.name)
+                    binding.etEmail.setText(updateUserProfile?.email)
 
-                binding.etPhoneNumber.setText(userData.phoneNumber)
-                binding.etName.setText(userData.name)
-                binding.etEmail.setText(userData.email)
+                    selectedAvatar = updateUserProfile?.avatarImagePath ?: ""
+                    Glide.with(binding.ivProfilePic).load(selectedAvatar)
+                        .placeholder(R.drawable.ic_profile).into(binding.ivProfilePic)
 
-                binding.etEmail.isEnabled = binding.etEmail.text.isNullOrEmpty()
-                binding.etPhoneNumber.isEnabled = binding.etPhoneNumber.text.isNullOrEmpty()
+                    binding.etEmail.isEnabled = binding.etEmail.text.isNullOrEmpty()
+                    binding.etPhoneNumber.isEnabled = binding.etPhoneNumber.text.isNullOrEmpty()
+                } else {
+                    userData = it
+
+                    binding.etPhoneNumber.setText(userData.phoneNumber)
+                    binding.etName.setText(userData.name)
+                    binding.etEmail.setText(userData.email)
+
+                    binding.etEmail.isEnabled = binding.etEmail.text.isNullOrEmpty()
+                    binding.etPhoneNumber.isEnabled = binding.etPhoneNumber.text.isNullOrEmpty()
+                }
             }.onFailure {
 
             }
@@ -106,6 +127,7 @@ class ProfileSetupActivity : BaseActivity() {
         }
 
         val user = User(userId, name, phoneNumber, email, avatarImagePath)
+
         userDetailViewModel.insertUserData(user)
     }
 }

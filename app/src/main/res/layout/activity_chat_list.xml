@@ -108,7 +108,9 @@
             android:layout_marginHorizontal="@dimen/_10sdp"
             android:layout_marginTop="@dimen/_10sdp"
             android:orientation="vertical"
+            android:visibility="gone"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/item_chat_list" />
+
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

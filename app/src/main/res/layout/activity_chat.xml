@@ -66,6 +66,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginHorizontal="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
         android:orientation="vertical"
         android:paddingTop="@dimen/_10sdp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
@@ -73,6 +74,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/llHeader" />
+
+    <ImageView
+        android:id="@+id/ivScrollToBottom"
+        android:layout_width="@dimen/_25sdp"
+        android:layout_height="@dimen/_25sdp"
+        android:layout_marginBottom="@dimen/_20sdp"
+        android:background="@drawable/bg_button"
+        android:backgroundTint="@color/subTextColor"
+        android:padding="@dimen/_5sdp"
+        android:rotation="-90"
+        android:src="@drawable/ic_back"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/rvChats"
+        app:layout_constraintEnd_toEndOf="@+id/rvChats" />
 
     <LinearLayout
         android:id="@+id/llMessageBar"
