@@ -37,8 +37,9 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         )
 
         val notificationBuilder =
-            NotificationCompat.Builder(this, "FCM_CHANNEL").setSmallIcon(R.drawable.ic_message)
-                .setContentTitle(title).setContentText(message).setAutoCancel(true)
+            NotificationCompat.Builder(this, "Chat_CHANNEL").setSmallIcon(R.drawable.ic_message)
+                .setContentTitle("New Message").setContentText(message)
+                .setPriority(NotificationCompat.PRIORITY_HIGH).setAutoCancel(true)
                 .setContentIntent(pendingIntent)
 
         val notificationManager =

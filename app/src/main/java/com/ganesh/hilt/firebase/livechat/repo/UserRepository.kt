@@ -146,7 +146,7 @@ class UserRepository @Inject constructor(
             }
 
             if (snapshots != null && !snapshots.isEmpty) {
-                val userChatList = ArrayList<User>()
+                var userChatList = ArrayList<User>()
 
                 snapshots.documents.forEachIndexed { index, document ->
                     val receiverId = document.id.replace(uid, "").replace("-", "")
@@ -156,6 +156,9 @@ class UserRepository @Inject constructor(
                         chatRepository.getMessages(receiverId) {
                             userData.chatMessage = it.last()
                             userChatList.add(userData)
+
+                            userChatList = removeDuplicateUsers(userChatList)
+
                             result(userChatList)
                         }
                     }
@@ -166,5 +169,15 @@ class UserRepository @Inject constructor(
                 Log.d("ChatUpdate", "No chats available")
             }
         }
+    }
+
+    private fun removeDuplicateUsers(dataList: ArrayList<User>): ArrayList<User> {
+        val uniqueUsers = LinkedHashMap<String, User>()
+
+        for (data in dataList) {
+            uniqueUsers[data.uid] = data // Replaces earlier entries, keeping the last one
+        }
+
+        return ArrayList(uniqueUsers.values)
     }
 }

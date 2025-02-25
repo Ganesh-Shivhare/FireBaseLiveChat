@@ -70,4 +70,8 @@ class UserDetailViewModel @Inject constructor(
             }
         }
     }
+
+    override fun onCleared() {
+        super.onCleared()
+    }
 }

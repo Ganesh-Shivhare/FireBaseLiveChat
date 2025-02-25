@@ -6,8 +6,8 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import androidx.activity.viewModels
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import com.ganesh.hilt.firebase.livechat.databinding.ActivityChatListBinding
 import com.ganesh.hilt.firebase.livechat.ui.BaseActivity
 import com.ganesh.hilt.firebase.livechat.ui.adapter.UserListAdapter
@@ -22,7 +22,7 @@ class ChatListActivity : BaseActivity() {
     }
     private val searchListAdapter: UserListAdapter by lazy { UserListAdapter(this) }
     private val userListAdapter: UserListAdapter by lazy { UserListAdapter(this) }
-    private lateinit var viewModel: FirebaseViewModel
+    private val viewModel: FirebaseViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +31,6 @@ class ChatListActivity : BaseActivity() {
         initView()
         setupObservers()
 
-        viewModel = ViewModelProvider(this)[FirebaseViewModel::class.java]
         viewModel.fcmToken.observe(this) { token ->
             Log.d("MainActivity", "FCM Token: $token")
         }
