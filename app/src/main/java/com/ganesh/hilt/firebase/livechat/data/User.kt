@@ -11,4 +11,13 @@ data class User(
     @SerializedName("avatarImagePath") @Expose var avatarImagePath: String = "",
     @SerializedName("chatMessage") @Expose var chatMessage: ChatMessage = ChatMessage(),
     @SerializedName("unreadMessageCount") @Expose var unreadMessageCount: Int = 0,
+    @SerializedName("UserStatus") @Expose var userStatus: UserStatus = UserStatus(),
+)
+
+
+data class UserStatus(
+    @SerializedName("status") @Expose val status: String = "offline",
+    @SerializedName("lastSeen") @Expose val lastSeen: Long = -1,
+    @SerializedName("typing") @Expose val typing: Boolean = false,
+    @SerializedName("typingTo") @Expose val typingTo: String? = null
 )

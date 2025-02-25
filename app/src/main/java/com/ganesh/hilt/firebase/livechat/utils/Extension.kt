@@ -22,6 +22,22 @@ fun Long.formatTimeFromMillis(): String {
     return sdf.format(Date(this))
 }
 
+fun Long.formatDateTimeFromMillis(): String {
+    val date = Date()
+
+    return if (SimpleDateFormat(
+            "dd-MM-yyyy", Locale.getDefault()
+        ).format(date) == SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(this)
+    ) {
+        val sdf = SimpleDateFormat("hh:mm a", Locale.getDefault()) // 12-hour format with AM/PM
+        sdf.format(Date(this))
+    } else {
+        val sdf =
+            SimpleDateFormat("hh:mm a dd-MM-yyyy", Locale.getDefault()) // 12-hour format with AM/PM
+        sdf.format(Date(this))
+    }
+}
+
 fun Context.getAvatarImageList(): ArrayList<String> {
     val assetManager = assets
     val frameModels = ArrayList<String>()
@@ -42,8 +58,7 @@ fun Context.getAvatarImageList(): ArrayList<String> {
                     // It's a file, classify it based on name or extension
                     when {
                         file.contains("ic_avatar") -> {
-                            frameImagePath =
-                                "${getAssetsStartPath()}$fullPath"
+                            frameImagePath = "${getAssetsStartPath()}$fullPath"
 
                             frameModels.add(frameImagePath)
                         }

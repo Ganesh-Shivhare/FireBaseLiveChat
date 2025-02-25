@@ -1,9 +1,13 @@
 package com.ganesh.hilt.firebase.livechat.ui.activity
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -15,6 +19,7 @@ import com.ganesh.hilt.firebase.livechat.data.User
 import com.ganesh.hilt.firebase.livechat.databinding.ActivityChatBinding
 import com.ganesh.hilt.firebase.livechat.ui.BaseActivity
 import com.ganesh.hilt.firebase.livechat.ui.adapter.MessageListAdapter
+import com.ganesh.hilt.firebase.livechat.utils.formatDateTimeFromMillis
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -38,6 +43,7 @@ class ChatActivity : BaseActivity() {
 
         initializeView()
         setupObservers()
+        setupKeyboardListener()
     }
 
     private fun initializeView() {
@@ -49,8 +55,6 @@ class ChatActivity : BaseActivity() {
             tvUserName.text = receiverUserData.name
             Glide.with(ivProfilePic).load(receiverUserData.avatarImagePath)
                 .placeholder(R.drawable.ic_profile).into(ivProfilePic)
-
-            tvStatus.isVisible = false
 
             etMessage.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(
@@ -110,8 +114,11 @@ class ChatActivity : BaseActivity() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun setupObservers() {
         userDetailViewModel.isUserDataAvailable()
+        userDetailViewModel.setReceiverID(receiverUserData.uid)
+        userDetailViewModel.listenForUserStatus(receiverUserData.uid)
 
         userDetailViewModel.currentUserProfile.observe(this) { result ->
             result.onSuccess {
@@ -134,10 +141,61 @@ class ChatActivity : BaseActivity() {
         isUserAtBottom.observe(this) {
             if (it) {
                 chatViewModel.updateMessageReadStatus(
-                    receiverUserData.uid,
-                    messageListAdapter.messageList
+                    receiverUserData.uid, messageListAdapter.messageList
                 )
             }
+        }
+
+        // Observe User Status Changes
+        userDetailViewModel.userStatus.observe(this) { userStatus ->
+            Log.d("UserStatus", "User is ${Gson().toJson(userStatus)}")
+            if (userStatus.lastSeen > 0) {
+                binding.tvStatus.isVisible = true
+
+                if (userStatus.status.equals("online", true)) {
+                    if (userStatus.typing) {
+                        binding.tvStatus.text = "Typing..."
+                        binding.tvStatus.setTextColor(
+                            ContextCompat.getColor(
+                                this, R.color.themeColor
+                            )
+                        )
+                    } else {
+                        binding.tvStatus.text = "Online"
+                        binding.tvStatus.setTextColor(
+                            ContextCompat.getColor(
+                                this, R.color.subTextColor
+                            )
+                        )
+                    }
+                } else {
+                    binding.tvStatus.text =
+                        "Last Seen ${userStatus.lastSeen.formatDateTimeFromMillis()}"
+                    binding.tvStatus.setTextColor(
+                        ContextCompat.getColor(
+                            this, R.color.subTextColor
+                        )
+                    )
+                }
+            } else {
+                binding.tvStatus.isVisible = false
+            }
+        }
+    }
+
+    private fun setupKeyboardListener() {
+        val rootView = window.decorView.rootView
+
+        ViewCompat.setOnApplyWindowInsetsListener(rootView) { view, insets ->
+            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+
+            // Simulate typing event
+            userDetailViewModel.setTypingStatus(imeVisible)
+
+            // Consume the IME insets to prevent extra space at the bottom
+            val insetsConsumed = insets.consumeSystemWindowInsets()
+            ViewCompat.onApplyWindowInsets(view, insetsConsumed)
+            insets
         }
     }
 }

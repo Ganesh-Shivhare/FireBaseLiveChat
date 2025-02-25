@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ganesh.hilt.firebase.livechat.data.User
+import com.ganesh.hilt.firebase.livechat.data.UserStatus
 import com.ganesh.hilt.firebase.livechat.repo.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -29,6 +30,9 @@ class UserDetailViewModel @Inject constructor(
 
     private val _currentUserProfile = MutableLiveData<Result<User>>()
     val currentUserProfile: LiveData<Result<User>> get() = _currentUserProfile
+
+    private val _userStatus = MutableLiveData<UserStatus>()
+    val userStatus: LiveData<UserStatus> get() = _userStatus
 
     fun searchUsers(query: String) {
         viewModelScope.launch {
@@ -71,7 +75,38 @@ class UserDetailViewModel @Inject constructor(
         }
     }
 
-    override fun onCleared() {
-        super.onCleared()
+    /**
+     * Update user's online status (online/offline)
+     */
+    fun setUserOnlineStatus(status: String) {
+        viewModelScope.launch {
+            repository.updateUserStatus(status)
+        }
+    }
+
+    /**
+     * Set typing status for a specific user
+     */
+    fun setTypingStatus(isTyping: Boolean) {
+        viewModelScope.launch {
+            repository.setUserTyping(isTyping)
+        }
+    }
+
+    /**
+     * Listen for user status updates and update LiveData
+     */
+    fun listenForUserStatus(userId: String) {
+        viewModelScope.launch {
+            repository.listenForUserUpdates(userId) { user ->
+                _userStatus.postValue(user?.userStatus)
+            }
+        }
+    }
+
+    fun setReceiverID(uid: String) {
+        viewModelScope.launch {
+            repository.setUserReceiverID(uid)
+        }
     }
 }

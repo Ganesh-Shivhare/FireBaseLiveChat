@@ -55,9 +55,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/medium"
-                android:text="Last Seen 2 hours ago"
+                android:text=""
                 android:textColor="@color/subTextColor"
-                android:textSize="@dimen/_11sdp" />
+                android:textSize="@dimen/_10sdp" />
         </LinearLayout>
     </LinearLayout>
 

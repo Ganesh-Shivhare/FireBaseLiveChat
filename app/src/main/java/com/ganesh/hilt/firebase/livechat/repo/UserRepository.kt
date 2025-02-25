@@ -2,10 +2,13 @@ package com.ganesh.hilt.firebase.livechat.repo
 
 import android.util.Log
 import com.ganesh.hilt.firebase.livechat.data.User
+import com.ganesh.hilt.firebase.livechat.data.UserStatus
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class UserRepository @Inject constructor(
     private val auth: FirebaseAuth,
     private val firestore: FirebaseFirestore,
@@ -39,7 +42,7 @@ class UserRepository @Inject constructor(
                 users.add(userData)
             }
 
-            val searchUserList = ArrayList<User>()
+            var searchUserList = ArrayList<User>()
             users.forEach { userData ->
                 if (userData.uid != auth.currentUser?.uid) {
                     if (userData.email.contains(query, true) || userData.phoneNumber.contains(
@@ -51,6 +54,7 @@ class UserRepository @Inject constructor(
                 }
             }
 
+            searchUserList = removeDuplicateUsers(searchUserList)
             onResult(searchUserList)
         }
     }
@@ -190,5 +194,79 @@ class UserRepository @Inject constructor(
         }
 
         return ArrayList(uniqueUsers.values)
+    }
+
+    private fun getUserId(): String? {
+        return auth.currentUser?.uid
+    }
+
+    /**
+     * Update user profile data (name, phone, email, avatar)
+     */
+    fun updateUserData(name: String, phoneNumber: String, email: String, avatarImagePath: String) {
+        val userId = getUserId() ?: return
+        val userRef = firestore.collection("users").document(userId)
+
+        val user = User(
+            uid = userId,
+            name = name,
+            phoneNumber = phoneNumber,
+            email = email,
+            avatarImagePath = avatarImagePath,
+            userStatus = UserStatus()
+        )
+
+        userRef.set(user)
+    }
+
+    /**
+     * Update user's online status and last seen
+     */
+    fun updateUserStatus(status: String) {
+        val userId = getUserId() ?: return
+        val userRef = firestore.collection("users").document(userId)
+
+        val statusMap = mapOf(
+            "userStatus.status" to status, "userStatus.lastSeen" to System.currentTimeMillis()
+        )
+
+        userRef.update(statusMap)
+    }
+
+    /**
+     * Update typing status for a particular receiver
+     */
+    fun setUserTyping(isTyping: Boolean) {
+        val userId = getUserId() ?: return
+        val userRef = firestore.collection("users").document(userId)
+
+        val typingMap = mapOf(
+            "userStatus.typing" to isTyping
+        )
+
+        userRef.update(typingMap)
+    }
+
+    /**
+     * Listen for real-time updates on user status
+     */
+    fun listenForUserUpdates(userId: String, onUserUpdate: (User?) -> Unit) {
+        val userRef = firestore.collection("users").document(userId)
+
+        userRef.addSnapshotListener { snapshot, _ ->
+            val user = snapshot?.toObject(User::class.java)
+            onUserUpdate(user)
+        }
+    }
+
+    fun setUserReceiverID(uid: String) {
+        val userId = getUserId() ?: return
+        val userRef = firestore.collection("users").document(userId)
+
+        val typingMap = mapOf(
+            "userStatus.typingTo" to uid
+        )
+
+        userRef.update(typingMap)
     }
 }

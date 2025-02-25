@@ -3,6 +3,7 @@ package com.ganesh.hilt.firebase.livechat.ui
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.ganesh.hilt.firebase.livechat.utils.UserStatusManager
 import com.ganesh.hilt.firebase.livechat.viewModel.ChatViewModel
 import com.ganesh.hilt.firebase.livechat.viewModel.LoginViewModel
 import com.ganesh.hilt.firebase.livechat.viewModel.UserDetailViewModel
@@ -18,5 +19,7 @@ open class BaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        UserStatusManager.initialize(this)
     }
 }
