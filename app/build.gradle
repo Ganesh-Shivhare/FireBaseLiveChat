@@ -43,6 +43,11 @@ android {
         viewBinding true
         buildConfig true
     }
+
+    packagingOptions {
+        exclude 'META-INF/INDEX.LIST'
+        exclude 'META-INF/DEPENDENCIES'
+    }
 }
 
 kapt {
@@ -59,6 +64,7 @@ dependencies {
     implementation libs.firebase.firestore.ktx
     implementation libs.firebase.messaging.ktx
     implementation libs.firebase.functions.ktx
+    implementation libs.volley
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit
     androidTestImplementation libs.androidx.espresso.core
@@ -83,4 +89,7 @@ dependencies {
 
     implementation libs.androidx.lifecycle.viewmodel.ktx
     implementation libs.kotlinx.coroutines.android
+
+    implementation("com.google.auth:google-auth-library-oauth2-http:1.21.0") // OAuth 2.0 Auth
+    implementation("com.squareup.okhttp3:okhttp:4.9.3") // HTTP Requests
 }

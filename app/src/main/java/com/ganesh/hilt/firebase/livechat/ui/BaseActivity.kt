@@ -1,9 +1,11 @@
 package com.ganesh.hilt.firebase.livechat.ui
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.ganesh.hilt.firebase.livechat.utils.UserStatusManager
+import com.ganesh.hilt.firebase.livechat.R
+import com.ganesh.hilt.firebase.livechat.utils.FcmUserDetailViewModel
 import com.ganesh.hilt.firebase.livechat.viewModel.ChatViewModel
 import com.ganesh.hilt.firebase.livechat.viewModel.LoginViewModel
 import com.ganesh.hilt.firebase.livechat.viewModel.UserDetailViewModel
@@ -17,9 +19,14 @@ open class BaseActivity : AppCompatActivity() {
     internal val userDetailViewModel: UserDetailViewModel by viewModels()
     internal val chatViewModel: ChatViewModel by viewModels()
 
+    internal val sharedPreferences: SharedPreferences by lazy {
+        getSharedPreferences(getString(R.string.app_name), MODE_PRIVATE);
+    }
+    internal val editor: SharedPreferences.Editor by lazy { sharedPreferences.edit(); }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        UserStatusManager.initialize(this)
+        FcmUserDetailViewModel.initialize(this)
     }
 }

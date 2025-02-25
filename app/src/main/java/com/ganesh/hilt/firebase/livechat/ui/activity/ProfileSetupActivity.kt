@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.viewModels
 import com.bumptech.glide.Glide
 import com.ganesh.hilt.firebase.livechat.R
 import com.ganesh.hilt.firebase.livechat.data.User
@@ -12,6 +13,7 @@ import com.ganesh.hilt.firebase.livechat.databinding.ActivityProfileSetupBinding
 import com.ganesh.hilt.firebase.livechat.ui.BaseActivity
 import com.ganesh.hilt.firebase.livechat.ui.dialog.AvatarSelectionDialog
 import com.ganesh.hilt.firebase.livechat.utils.getAvatarImageList
+import com.ganesh.hilt.firebase.livechat.viewModel.FirebaseViewModel
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -37,6 +39,7 @@ class ProfileSetupActivity : BaseActivity() {
     }
     private var selectedAvatar: String = ""
     private var updateUserProfile: User? = null
+    private val viewModel: FirebaseViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,8 +52,12 @@ class ProfileSetupActivity : BaseActivity() {
             binding.btnSaveProfile.text = "Update Profile"
         } else {
             selectedAvatar = avatarList.randomOrNull() ?: ""
-            Glide.with(binding.ivProfilePic).load(selectedAvatar)
-                .placeholder(R.drawable.ic_profile).into(binding.ivProfilePic)
+            Glide.with(binding.ivProfilePic).load(selectedAvatar).placeholder(R.drawable.ic_profile)
+                .into(binding.ivProfilePic)
+        }
+
+        viewModel.fcmToken.observe(this) { token ->
+            editor.putString("fcmToken", token).apply()
         }
 
         binding.btnSaveProfile.setOnClickListener { saveUserProfile() }
@@ -94,7 +101,7 @@ class ProfileSetupActivity : BaseActivity() {
             }
         }
 
-        userDetailViewModel.currentUserProfile.observe(this) { result ->
+        userDetailViewModel.myUserProfile.observe(this) { result ->
             result.onSuccess {
                 Log.d("TAG_dataInserted", "onSuccess: " + Gson().toJson(it))
                 startActivity(Intent(
@@ -127,6 +134,7 @@ class ProfileSetupActivity : BaseActivity() {
         }
 
         val user = User(userId, name, phoneNumber, email, avatarImagePath)
+        user.userToken = sharedPreferences.getString("fcmToken", "") ?: ""
 
         userDetailViewModel.insertUserData(user)
     }

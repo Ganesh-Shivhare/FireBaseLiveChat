@@ -25,6 +25,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ChatActivity : BaseActivity() {
+    private var isFirstTime = true
     private var _isUserAtBottom: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply {
         value = true
     }
@@ -86,7 +87,7 @@ class ChatActivity : BaseActivity() {
                 if (messageListAdapter.itemCount > 0) {
                     rvChats.smoothScrollToPosition(messageListAdapter.itemCount - 1)
                 }
-                chatViewModel.sendMessage(receiverUserData.uid, message)
+                chatViewModel.sendMessage(currentUserData, receiverUserData, message)
 
                 etMessage.setText("")
 //                etMessage.hideKeyboard()
@@ -120,7 +121,7 @@ class ChatActivity : BaseActivity() {
         userDetailViewModel.setReceiverID(receiverUserData.uid)
         userDetailViewModel.listenForUserStatus(receiverUserData.uid)
 
-        userDetailViewModel.currentUserProfile.observe(this) { result ->
+        userDetailViewModel.myUserProfile.observe(this) { result ->
             result.onSuccess {
                 currentUserData = it
                 messageListAdapter.setCurrentUserId(currentUserData.uid)
@@ -131,10 +132,11 @@ class ChatActivity : BaseActivity() {
             Log.d("TAG_message", "setupObservers: " + it.size)
             messageListAdapter.updateUserList(it)
 
-            if (isUserAtBottom.value!!) {
+            if (isFirstTime || isUserAtBottom.value!!) {
                 if (messageListAdapter.itemCount > 0) {
                     binding.rvChats.smoothScrollToPosition(it.size - 1)
                 }
+                isFirstTime = true
             }
         }
 

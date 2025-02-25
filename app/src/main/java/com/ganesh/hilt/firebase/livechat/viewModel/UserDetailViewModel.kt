@@ -28,8 +28,11 @@ class UserDetailViewModel @Inject constructor(
     private val _addUserProfile = MutableLiveData<Result<Boolean>>()
     val addUserProfile: LiveData<Result<Boolean>> get() = _addUserProfile
 
-    private val _currentUserProfile = MutableLiveData<Result<User>>()
-    val currentUserProfile: LiveData<Result<User>> get() = _currentUserProfile
+    private val _myUserProfile = MutableLiveData<Result<User>>()
+    val myUserProfile: LiveData<Result<User>> get() = _myUserProfile
+
+    private val _receiverUserProfile = MutableLiveData<User>()
+    val receiverUserProfile: LiveData<User> get() = _receiverUserProfile
 
     private val _userStatus = MutableLiveData<UserStatus>()
     val userStatus: LiveData<UserStatus> get() = _userStatus
@@ -54,7 +57,7 @@ class UserDetailViewModel @Inject constructor(
         viewModelScope.launch {
             repository.isUserDataAvailable {
                 _addUserProfile.postValue(it.second)
-                _currentUserProfile.postValue(it.first)
+                _myUserProfile.postValue(it.first)
             }
         }
     }
@@ -62,7 +65,7 @@ class UserDetailViewModel @Inject constructor(
     fun insertUserData(userModel: User) {
         viewModelScope.launch {
             repository.insertUserProfileData(userModel) {
-                _currentUserProfile.postValue(it)
+                _myUserProfile.postValue(it)
             }
         }
     }
@@ -71,6 +74,14 @@ class UserDetailViewModel @Inject constructor(
         viewModelScope.launch {
             repository.getCurrentlyChatsUsers {
                 _currentlyChatsUsers.postValue(it)
+            }
+        }
+    }
+
+    fun getUserById(id: String) {
+        viewModelScope.launch {
+            repository.getUserById(id) {
+                _receiverUserProfile.postValue(it)
             }
         }
     }

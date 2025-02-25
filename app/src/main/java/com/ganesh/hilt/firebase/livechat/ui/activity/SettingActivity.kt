@@ -55,7 +55,7 @@ class SettingActivity : BaseActivity() {
     private fun setupObservers() {
         userDetailViewModel.isUserDataAvailable()
 
-        userDetailViewModel.currentUserProfile.observe(this) { result ->
+        userDetailViewModel.myUserProfile.observe(this) { result ->
             result.onSuccess {
                 currentUserData = it
 

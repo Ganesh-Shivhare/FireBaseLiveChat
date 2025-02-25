@@ -2,12 +2,14 @@ package com.ganesh.hilt.firebase.livechat.ui.activity
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
+import com.ganesh.hilt.firebase.livechat.R
 import com.ganesh.hilt.firebase.livechat.data.User
 import com.ganesh.hilt.firebase.livechat.databinding.ActivityChatListBinding
 import com.ganesh.hilt.firebase.livechat.ui.BaseActivity
@@ -33,8 +35,13 @@ class ChatListActivity : BaseActivity() {
         initView()
         setupObservers()
 
+        val sharedPreferences: SharedPreferences =
+            getSharedPreferences(getString(R.string.app_name), MODE_PRIVATE);
+        val editor: SharedPreferences.Editor = sharedPreferences.edit();
+
         viewModel.fcmToken.observe(this) { token ->
-            Log.d("MainActivity", "FCM Token: $token")
+            Log.d("TAG_userToken", "setupObservers: $token")
+            editor.putString("fcmToken", token).apply()
         }
 
         viewModel.fetchToken()
@@ -68,7 +75,7 @@ class ChatListActivity : BaseActivity() {
 
         userDetailViewModel.isUserDataAvailable()
 
-        userDetailViewModel.currentUserProfile.observe(this) { result ->
+        userDetailViewModel.myUserProfile.observe(this) { result ->
             result.onSuccess {
                 currentUserData = it
                 userListAdapter.setCurrentUserId(currentUserData.uid)
