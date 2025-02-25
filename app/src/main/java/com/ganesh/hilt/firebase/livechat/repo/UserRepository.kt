@@ -153,8 +153,19 @@ class UserRepository @Inject constructor(
                     Log.d("TAG_currentUsers", "Found chat: ${receiverId}")
 
                     getUserById(receiverId) { userData ->
-                        chatRepository.getMessages(receiverId) {
-                            userData.chatMessage = it.last()
+                        chatRepository.getMessages(receiverId) { chatMessages ->
+                            if (chatMessages.isNotEmpty()) {
+                                userData.chatMessage = chatMessages.last()
+                            }
+
+                            var unreadMessageCount = 0
+                            chatMessages.forEach {
+                                if (it.senderId != uid && !it.messageRead) {
+                                    unreadMessageCount++
+                                }
+                            }
+                            userData.unreadMessageCount = unreadMessageCount
+
                             userChatList.add(userData)
 
                             userChatList = removeDuplicateUsers(userChatList)

@@ -7,5 +7,7 @@ data class ChatMessage(
     @SerializedName("senderId") @Expose val senderId: String = "",
     @SerializedName("receiverId") @Expose val receiverId: String = "",
     @SerializedName("message") @Expose val message: String = "",
-    @SerializedName("timestamp") @Expose val timestamp: Long = System.currentTimeMillis()
+    @SerializedName("timestamp") @Expose val timestamp: Long = System.currentTimeMillis(),
+    @SerializedName("messageRead") @Expose var messageRead: Boolean = false,
+    @SerializedName("messageId") @Expose var messageId: String = "",
 )

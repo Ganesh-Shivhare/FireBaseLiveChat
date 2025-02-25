@@ -105,6 +105,16 @@
                 android:text="09:15 Am"
                 android:textColor="@color/subTextColor"
                 android:textSize="@dimen/_9sdp" />
+
+            <ImageView
+                android:id="@+id/ivCheck"
+                android:layout_width="@dimen/_14sdp"
+                android:layout_height="@dimen/_14sdp"
+                android:layout_gravity="bottom"
+                android:gravity="bottom"
+                android:layout_marginStart="@dimen/_2sdp"
+                android:src="@drawable/ic_check"
+                app:tint="@color/subTextColor" />
         </LinearLayout>
 
         <ImageView

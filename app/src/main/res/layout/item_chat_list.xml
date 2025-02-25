@@ -19,9 +19,10 @@
             app:shapeAppearanceOverlay="@style/CircleImage" />
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_gravity="center"
+            android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical"
             android:paddingHorizontal="@dimen/_10sdp">
@@ -59,7 +60,32 @@
                     android:text="Dec 18, 2025"
                     android:textColor="@color/subTextColor"
                     android:textSize="@dimen/_9sdp" />
+
+                <ImageView
+                    android:id="@+id/ivCheck"
+                    android:layout_width="@dimen/_14sdp"
+                    android:layout_height="@dimen/_14sdp"
+                    android:layout_gravity="bottom"
+                    android:layout_marginStart="@dimen/_2sdp"
+                    android:gravity="bottom"
+                    android:src="@drawable/ic_check"
+                    android:visibility="gone"
+                    app:tint="@color/subTextColor" />
             </LinearLayout>
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvUnreadMessageCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_button"
+            android:gravity="center"
+            android:minWidth="@dimen/_18sdp"
+            android:padding="@dimen/_3sdp"
+            android:text="1"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_10sdp"
+            android:visibility="gone" />
     </LinearLayout>
 </LinearLayout>

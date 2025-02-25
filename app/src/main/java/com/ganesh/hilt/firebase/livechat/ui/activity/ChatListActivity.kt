@@ -8,6 +8,7 @@ import android.text.TextWatcher
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
+import com.ganesh.hilt.firebase.livechat.data.User
 import com.ganesh.hilt.firebase.livechat.databinding.ActivityChatListBinding
 import com.ganesh.hilt.firebase.livechat.ui.BaseActivity
 import com.ganesh.hilt.firebase.livechat.ui.adapter.UserListAdapter
@@ -17,6 +18,7 @@ import com.google.gson.Gson
 
 class ChatListActivity : BaseActivity() {
 
+    private lateinit var currentUserData: User
     private val binding: ActivityChatListBinding by lazy {
         ActivityChatListBinding.inflate(layoutInflater)
     }
@@ -62,6 +64,15 @@ class ChatListActivity : BaseActivity() {
             }
 
             userListAdapter.updateUserList(chatList)
+        }
+
+        userDetailViewModel.isUserDataAvailable()
+
+        userDetailViewModel.currentUserProfile.observe(this) { result ->
+            result.onSuccess {
+                currentUserData = it
+                userListAdapter.setCurrentUserId(currentUserData.uid)
+            }.onFailure {}
         }
     }
 

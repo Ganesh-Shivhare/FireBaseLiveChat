@@ -23,4 +23,10 @@ class ChatViewModel @Inject constructor(private val repository: ChatRepository) 
             repository.getMessages(receiverId, onMessagesReceived)
         }
     }
+
+    fun updateMessageReadStatus(uid: String, messageList: List<ChatMessage>) {
+        viewModelScope.launch {
+            repository.updateMessageReadStatus(uid, messageList)
+        }
+    }
 }

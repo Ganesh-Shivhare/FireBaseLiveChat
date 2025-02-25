@@ -9,5 +9,6 @@ data class User(
     @SerializedName("phoneNumber") @Expose var phoneNumber: String = "",
     @SerializedName("email") @Expose var email: String = "",
     @SerializedName("avatarImagePath") @Expose var avatarImagePath: String = "",
-    @SerializedName("chatMessage") @Expose var chatMessage: ChatMessage = ChatMessage()
+    @SerializedName("chatMessage") @Expose var chatMessage: ChatMessage = ChatMessage(),
+    @SerializedName("unreadMessageCount") @Expose var unreadMessageCount: Int = 0,
 )

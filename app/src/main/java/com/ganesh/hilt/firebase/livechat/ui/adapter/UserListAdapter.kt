@@ -1,9 +1,11 @@
 package com.ganesh.hilt.firebase.livechat.ui.adapter
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -29,23 +31,54 @@ class UserListAdapter(private val baseActivity: BaseActivity) :
         return UserViewHolder(binding)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
         val user = userList[position]
-        holder.binding.tvUserName.text = user.name
 
-        Log.d("TAG_avatarImagePath", "onBindViewHolder: " + user.chatMessage.message)
+        with(holder.binding) {
 
-        Glide.with(holder.binding.ivProfilePic).load(user.avatarImagePath)
-            .placeholder(R.drawable.ic_profile).into(holder.binding.ivProfilePic)
+            tvUserName.text = user.name
 
-        holder.binding.llChatData.isVisible = user.chatMessage.message.isNotEmpty()
-        holder.binding.tvMessage.text = user.chatMessage.message
-        holder.binding.tvLastSeen.text = user.chatMessage.timestamp.formatTimeFromMillis()
+            Log.d("TAG_avatarImagePath", "onBindViewHolder: " + user.chatMessage.message)
 
-        holder.itemView.setOnClickListener {
-            val intent = Intent(baseActivity, ChatActivity::class.java)
-            intent.putExtra("receiverUserData", Gson().toJson(user))
-            baseActivity.startActivity(intent)
+            Glide.with(ivProfilePic).load(user.avatarImagePath)
+                .placeholder(R.drawable.ic_profile).into(ivProfilePic)
+
+            llChatData.isVisible = user.chatMessage.message.isNotEmpty()
+            tvMessage.text = user.chatMessage.message
+            tvLastSeen.text = user.chatMessage.timestamp.formatTimeFromMillis()
+            tvUnreadMessageCount.text = user.unreadMessageCount.toString()
+
+            if (user.chatMessage.senderId == currentUserID) {
+                ivCheck.isVisible = true
+                if (user.chatMessage.messageRead) {
+                    ivCheck.setImageResource(R.drawable.ic_checked)
+                    ivCheck.setColorFilter(ContextCompat.getColor(baseActivity, R.color.themeColor))
+                } else {
+                    ivCheck.setImageResource(R.drawable.ic_check)
+                    ivCheck.setColorFilter(
+                        ContextCompat.getColor(
+                            baseActivity,
+                            R.color.subTextColor
+                        )
+                    )
+                }
+            } else {
+                ivCheck.isVisible = false
+            }
+            if (user.unreadMessageCount > 0) {
+                tvLastSeen.isVisible = false
+                tvUnreadMessageCount.isVisible = true
+            } else {
+                tvLastSeen.isVisible = true
+                tvUnreadMessageCount.isVisible = false
+            }
+
+            holder.itemView.setOnClickListener {
+                val intent = Intent(baseActivity, ChatActivity::class.java)
+                intent.putExtra("receiverUserData", Gson().toJson(user))
+                baseActivity.startActivity(intent)
+            }
         }
     }
 
@@ -57,5 +90,12 @@ class UserListAdapter(private val baseActivity: BaseActivity) :
         userList.addAll(newList)
         notifyDataSetChanged()
     }
+
+    private var currentUserID: String = ""
+    fun setCurrentUserId(currentUserID: String) {
+        this.currentUserID = currentUserID
+        notifyDataSetChanged()
+    }
+
 }
 

@@ -5,6 +5,8 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import androidx.core.view.isVisible
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -18,7 +20,11 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ChatActivity : BaseActivity() {
-    private var isUserAtBottom: Boolean = true
+    private var _isUserAtBottom: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply {
+        value = true
+    }
+    private var isUserAtBottom: LiveData<Boolean> = _isUserAtBottom
+
     private val binding by lazy { ActivityChatBinding.inflate(layoutInflater) }
     private lateinit var currentUserData: User
     private lateinit var receiverUserData: User
@@ -97,8 +103,8 @@ class ChatActivity : BaseActivity() {
                     val totalItemCount = layoutManager.itemCount
 
                     // Check if the user is at the bottom
-                    isUserAtBottom = lastVisibleItemPosition == totalItemCount - 1
-                    ivScrollToBottom.isVisible = !isUserAtBottom
+                    _isUserAtBottom.value = lastVisibleItemPosition == totalItemCount - 1
+                    ivScrollToBottom.isVisible = !(isUserAtBottom.value ?: true)
                 }
             })
         }
@@ -118,10 +124,19 @@ class ChatActivity : BaseActivity() {
             Log.d("TAG_message", "setupObservers: " + it.size)
             messageListAdapter.updateUserList(it)
 
-            if (isUserAtBottom) {
+            if (isUserAtBottom.value!!) {
                 if (messageListAdapter.itemCount > 0) {
                     binding.rvChats.smoothScrollToPosition(it.size - 1)
                 }
+            }
+        }
+
+        isUserAtBottom.observe(this) {
+            if (it) {
+                chatViewModel.updateMessageReadStatus(
+                    receiverUserData.uid,
+                    messageListAdapter.messageList
+                )
             }
         }
     }

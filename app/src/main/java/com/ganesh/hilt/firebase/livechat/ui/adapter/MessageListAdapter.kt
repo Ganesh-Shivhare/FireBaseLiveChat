@@ -2,9 +2,11 @@ package com.ganesh.hilt.firebase.livechat.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.ganesh.hilt.firebase.livechat.R
 import com.ganesh.hilt.firebase.livechat.data.ChatMessage
 import com.ganesh.hilt.firebase.livechat.databinding.ItemMessageBinding
 import com.ganesh.hilt.firebase.livechat.ui.BaseActivity
@@ -13,7 +15,7 @@ import com.ganesh.hilt.firebase.livechat.utils.formatTimeFromMillis
 class MessageListAdapter(private val baseActivity: BaseActivity) :
     RecyclerView.Adapter<MessageListAdapter.UserViewHolder>() {
 
-    private var messageList = mutableListOf<ChatMessage>()
+    var messageList = mutableListOf<ChatMessage>()
     private var currentUserID: String = ""
 
     fun setCurrentUserId(currentUserID: String) {
@@ -39,6 +41,14 @@ class MessageListAdapter(private val baseActivity: BaseActivity) :
 
                 tvSendMessage.text = chatMessage.message
                 tvSendTime.text = chatMessage.timestamp.formatTimeFromMillis()
+
+                if (chatMessage.messageRead) {
+                    ivCheck.setImageResource(R.drawable.ic_checked)
+                    ivCheck.setColorFilter(ContextCompat.getColor(baseActivity, R.color.themeColor))
+                } else {
+                    ivCheck.setImageResource(R.drawable.ic_check)
+                    ivCheck.setColorFilter(ContextCompat.getColor(baseActivity, R.color.subTextColor))
+                }
             } else {
                 clReceiver.isVisible = true
                 clSender.isVisible = false
