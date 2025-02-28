@@ -45,22 +45,25 @@ class ChatRepository @Inject constructor(
 
             // Send FCM Notification
             senderUser.chatMessage = chatMessage
-            sendFCMNotification(senderUser, receiverUser, messageText)
+            senderUser.chatMessage.messageId = messageId
+            sendFCMNotification(senderUser, receiverUser)
         }
     }
 
-    fun updateMessageReadStatus(receiverId: String, messageList: List<ChatMessage>) {
+    fun changeMessageStatus(receiverId: String, messageReadStatus: Int, messageList: List<ChatMessage>) {
         val userID = auth.currentUser?.uid ?: return
         messageList.forEach { chatMessage ->
             val senderId = chatMessage.senderId
-            if (userID != senderId) {
-                Log.d("TAG_update", "updateMessageReadStatus:id ${chatMessage.messageId}")
-                Log.d("TAG_update", "updateMessageReadStatus:message ${chatMessage.message}")
-                val chatId =
-                    if (userID < receiverId) "$userID-$receiverId" else "$receiverId-$userID"
+            if (chatMessage.messageStatus != 2) {
+                if (userID != senderId) {
+                    Log.d("TAG_update", "updateMessageReadStatus:id ${chatMessage.messageId}")
+                    Log.d("TAG_update", "updateMessageReadStatus:message ${chatMessage.message}")
+                    val chatId =
+                        if (userID < receiverId) "$userID-$receiverId" else "$receiverId-$userID"
 
-                firestore.collection("fireChats").document(chatId).collection("messages")
-                    .document(chatMessage.messageId).update("messageRead", true)
+                    firestore.collection("fireChats").document(chatId).collection("messages")
+                        .document(chatMessage.messageId).update("messageStatus", messageReadStatus)
+                }
             }
         }
     }
@@ -77,17 +80,18 @@ class ChatRepository @Inject constructor(
                     message?.messageId = document.id // Assign Firestore document ID
                     message
                 } ?: emptyList()
+
+                changeMessageStatus(receiverId, 1, messages)
                 onMessagesReceived(messages)
             }
     }
 
-    private fun sendFCMNotification(senderUser: User, receiverUser: User, message: String) {
+    private fun sendFCMNotification(senderUser: User, receiverUser: User) {
 
-        if (receiverUser.userToken.isNullOrEmpty()) return
+        if (receiverUser.userToken.isEmpty()) return
 
         val userToken = receiverUser.userToken
         Log.d("TAG_userToken", "sendFCMNotification:userToken $userToken")
-
 
         getAccessToken(MyApplication.myApplication) { accessToken ->
             Log.d("TAG_userToken", "sendFCMNotification:accessToken $accessToken")

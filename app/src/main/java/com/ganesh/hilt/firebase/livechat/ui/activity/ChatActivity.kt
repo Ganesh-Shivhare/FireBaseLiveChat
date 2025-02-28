@@ -143,7 +143,7 @@ class ChatActivity : BaseActivity() {
         isUserAtBottom.observe(this) {
             if (it) {
                 chatViewModel.updateMessageReadStatus(
-                    receiverUserData.uid, messageListAdapter.messageList
+                    receiverUserData.uid, 2, messageListAdapter.messageList
                 )
             }
         }

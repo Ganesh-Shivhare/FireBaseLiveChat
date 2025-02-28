@@ -10,8 +10,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ChatViewModel @Inject constructor(private val repository: ChatRepository) :
-    ViewModel() {
+class ChatViewModel @Inject constructor(private val repository: ChatRepository) : ViewModel() {
 
     fun sendMessage(senderUser: User, receiverUser: User, messageText: String) {
         viewModelScope.launch {
@@ -25,9 +24,11 @@ class ChatViewModel @Inject constructor(private val repository: ChatRepository) 
         }
     }
 
-    fun updateMessageReadStatus(uid: String, messageList: List<ChatMessage>) {
+    fun updateMessageReadStatus(
+        uid: String, messageReadStatus: Int, messageList: List<ChatMessage>
+    ) {
         viewModelScope.launch {
-            repository.updateMessageReadStatus(uid, messageList)
+            repository.changeMessageStatus(uid, messageReadStatus, messageList)
         }
     }
 }

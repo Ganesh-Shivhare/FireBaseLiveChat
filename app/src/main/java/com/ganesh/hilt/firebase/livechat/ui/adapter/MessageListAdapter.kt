@@ -1,5 +1,6 @@
 package com.ganesh.hilt.firebase.livechat.ui.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -12,6 +13,7 @@ import com.ganesh.hilt.firebase.livechat.databinding.ItemMessageBinding
 import com.ganesh.hilt.firebase.livechat.ui.BaseActivity
 import com.ganesh.hilt.firebase.livechat.utils.formatTimeFromMillis
 
+@SuppressLint("NotifyDataSetChanged")
 class MessageListAdapter(private val baseActivity: BaseActivity) :
     RecyclerView.Adapter<MessageListAdapter.UserViewHolder>() {
 
@@ -42,12 +44,33 @@ class MessageListAdapter(private val baseActivity: BaseActivity) :
                 tvSendMessage.text = chatMessage.message
                 tvSendTime.text = chatMessage.timestamp.formatTimeFromMillis()
 
-                if (chatMessage.messageRead) {
-                    ivCheck.setImageResource(R.drawable.ic_checked)
-                    ivCheck.setColorFilter(ContextCompat.getColor(baseActivity, R.color.themeColor))
-                } else {
-                    ivCheck.setImageResource(R.drawable.ic_check)
-                    ivCheck.setColorFilter(ContextCompat.getColor(baseActivity, R.color.subTextColor))
+                when (chatMessage.messageStatus) {
+                    0 -> {
+                        ivCheck.setImageResource(R.drawable.ic_check)
+                        ivCheck.setColorFilter(
+                            ContextCompat.getColor(
+                                baseActivity, R.color.subTextColor
+                            )
+                        )
+                    }
+
+                    1 -> {
+                        ivCheck.setImageResource(R.drawable.ic_checked)
+                        ivCheck.setColorFilter(
+                            ContextCompat.getColor(
+                                baseActivity, R.color.subTextColor
+                            )
+                        )
+                    }
+
+                    2 -> {
+                        ivCheck.setImageResource(R.drawable.ic_checked)
+                        ivCheck.setColorFilter(
+                            ContextCompat.getColor(
+                                baseActivity, R.color.themeColor
+                            )
+                        )
+                    }
                 }
             } else {
                 clReceiver.isVisible = true

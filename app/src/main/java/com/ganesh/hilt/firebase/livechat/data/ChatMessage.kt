@@ -8,6 +8,6 @@ data class ChatMessage(
     @SerializedName("receiverId") @Expose val receiverId: String = "",
     @SerializedName("message") @Expose val message: String = "",
     @SerializedName("timestamp") @Expose val timestamp: Long = System.currentTimeMillis(),
-    @SerializedName("messageRead") @Expose var messageRead: Boolean = false,
+    @SerializedName("messageStatus") @Expose var messageStatus: Int = 0,
     @SerializedName("messageId") @Expose var messageId: String = "",
 )

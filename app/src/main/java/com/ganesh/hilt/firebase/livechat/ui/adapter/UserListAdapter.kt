@@ -41,8 +41,8 @@ class UserListAdapter(private val baseActivity: BaseActivity) :
 
             Log.d("TAG_avatarImagePath", "onBindViewHolder: " + user.chatMessage.message)
 
-            Glide.with(ivProfilePic).load(user.avatarImagePath)
-                .placeholder(R.drawable.ic_profile).into(ivProfilePic)
+            Glide.with(ivProfilePic).load(user.avatarImagePath).placeholder(R.drawable.ic_profile)
+                .into(ivProfilePic)
 
             llChatData.isVisible = user.chatMessage.message.isNotEmpty()
             tvMessage.text = user.chatMessage.message
@@ -51,17 +51,33 @@ class UserListAdapter(private val baseActivity: BaseActivity) :
 
             if (user.chatMessage.senderId == currentUserID) {
                 ivCheck.isVisible = true
-                if (user.chatMessage.messageRead) {
-                    ivCheck.setImageResource(R.drawable.ic_checked)
-                    ivCheck.setColorFilter(ContextCompat.getColor(baseActivity, R.color.themeColor))
-                } else {
-                    ivCheck.setImageResource(R.drawable.ic_check)
-                    ivCheck.setColorFilter(
-                        ContextCompat.getColor(
-                            baseActivity,
-                            R.color.subTextColor
+                when (user.chatMessage.messageStatus) {
+                    0 -> {
+                        ivCheck.setImageResource(R.drawable.ic_check)
+                        ivCheck.setColorFilter(
+                            ContextCompat.getColor(
+                                baseActivity, R.color.subTextColor
+                            )
                         )
-                    )
+                    }
+
+                    1 -> {
+                        ivCheck.setImageResource(R.drawable.ic_checked)
+                        ivCheck.setColorFilter(
+                            ContextCompat.getColor(
+                                baseActivity, R.color.subTextColor
+                            )
+                        )
+                    }
+
+                    2 -> {
+                        ivCheck.setImageResource(R.drawable.ic_checked)
+                        ivCheck.setColorFilter(
+                            ContextCompat.getColor(
+                                baseActivity, R.color.themeColor
+                            )
+                        )
+                    }
                 }
             } else {
                 ivCheck.isVisible = false

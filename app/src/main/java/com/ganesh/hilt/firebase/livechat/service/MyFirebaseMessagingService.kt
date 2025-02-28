@@ -52,6 +52,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         Log.d("TAG_message", "From: ${remoteMessage.from}")
 
         // Check if the message contains data payload
+        var notificationSent = false
         remoteMessage.data.isNotEmpty().let {
             Log.d("TAG_message", "Message Data: ${remoteMessage.data}")
             val senderUserModel = remoteMessage.data["senderUserModel"] ?: ""
@@ -71,7 +72,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                             "TAG_message", "User is online and in chat. Skipping notification."
                         )
                     } else {
-                        showNotification(senderUser)
+                        if (!notificationSent) {
+                            notificationSent = true
+                            showNotification(senderUser)
+                        }
                     }
                 }
             }

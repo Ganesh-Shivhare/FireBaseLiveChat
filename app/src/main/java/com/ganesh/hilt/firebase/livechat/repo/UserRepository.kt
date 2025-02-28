@@ -164,7 +164,7 @@ class UserRepository @Inject constructor(
 
                             var unreadMessageCount = 0
                             chatMessages.forEach {
-                                if (it.senderId != uid && !it.messageRead) {
+                                if (it.senderId != uid && it.messageStatus != 2) {
                                     unreadMessageCount++
                                 }
                             }
