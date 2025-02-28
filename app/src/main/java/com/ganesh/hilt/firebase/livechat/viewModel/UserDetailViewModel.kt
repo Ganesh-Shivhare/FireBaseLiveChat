@@ -108,10 +108,8 @@ class UserDetailViewModel @Inject constructor(
      * Listen for user status updates and update LiveData
      */
     fun listenForUserStatus(userId: String) {
-        viewModelScope.launch {
-            repository.listenForUserUpdates(userId) { user ->
-                _userStatus.postValue(user?.userStatus)
-            }
+        repository.listenForUserUpdates(userId) { user ->
+            _userStatus.postValue(user?.userStatus)
         }
     }
 
@@ -119,5 +117,9 @@ class UserDetailViewModel @Inject constructor(
         viewModelScope.launch {
             repository.setUserReceiverID(uid)
         }
+    }
+
+    fun updateUserStatus(status: String, fcmToken: String) {
+        repository.updateUserStatus(status, fcmToken)
     }
 }

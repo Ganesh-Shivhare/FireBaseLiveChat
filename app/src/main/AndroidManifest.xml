@@ -69,5 +69,9 @@
         <service
             android:name=".service.UserStatusService"
             android:exported="false" />
+
+        <receiver
+            android:name=".service.ReplyReceiver"
+            android:exported="false" />
     </application>
 </manifest>

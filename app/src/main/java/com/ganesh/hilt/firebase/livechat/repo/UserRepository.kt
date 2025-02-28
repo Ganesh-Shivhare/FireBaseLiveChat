@@ -259,6 +259,20 @@ class UserRepository @Inject constructor(
         }
     }
 
+    /**
+     * Listen for real-time updates on user status
+     */
+    fun getMyUserUpdates(onUserUpdate: (User) -> Unit) {
+        val userId = auth.currentUser?.uid ?: return
+
+        val userRef = firestore.collection("users").document(userId)
+
+        userRef.addSnapshotListener { snapshot, _ ->
+            val user = snapshot?.toObject(User::class.java)
+            user?.let(onUserUpdate)
+        }
+    }
+
     fun setUserReceiverID(uid: String) {
         val userId = getUserId() ?: return
         val userRef = firestore.collection("users").document(userId)
@@ -269,4 +283,32 @@ class UserRepository @Inject constructor(
 
         userRef.update(typingMap)
     }
+
+    fun updateUserStatus(status: String, fcmToken: String) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val userRef = FirebaseFirestore.getInstance().collection("users").document(userId)
+
+        val statusMap = if (status == "offline") {
+            mapOf(
+                "userToken" to fcmToken,
+                "userStatus.status" to status,
+                "userStatus.lastSeen" to System.currentTimeMillis(),
+                "userStatus.typing" to false
+            )
+        } else {
+            mapOf(
+                "userToken" to fcmToken,
+                "userStatus.status" to status,
+                "userStatus.lastSeen" to System.currentTimeMillis()
+            )
+        }
+
+        userRef.update(statusMap).addOnSuccessListener {
+            Log.d("TAG_UserStatusService", "Updated to $status")
+        }.addOnFailureListener { e ->
+            Log.e("TAG_UserStatusService", "Failed to update status: ", e)
+        }
+    }
+
+
 }

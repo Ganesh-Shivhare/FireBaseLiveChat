@@ -7,6 +7,7 @@ import com.ganesh.hilt.firebase.livechat.data.User
 import com.ganesh.hilt.firebase.livechat.utils.getAccessToken
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -43,6 +44,7 @@ class ChatRepository @Inject constructor(
             documentRef.update("messageId", messageId)
 
             // Send FCM Notification
+            senderUser.chatMessage = chatMessage
             sendFCMNotification(senderUser, receiverUser, messageText)
         }
     }
@@ -101,15 +103,9 @@ class ChatRepository @Inject constructor(
                 val payload = JSONObject().apply {
                     put("message", JSONObject().apply {
                         put("token", userToken)
-                        put("notification", JSONObject().apply {
-                            put("title", "New Message")
-                            put("body", message)
-                        })
                         put("data", JSONObject().apply {
-                            put("senderName", senderUser.name)  // Custom data
                             put("title", "New Message")
-                            put("message", message)
-                            put("receiverId", senderUser.uid)
+                            put("senderUserModel", Gson().toJson(senderUser))  // Custom data
                         })
                     })
                 }

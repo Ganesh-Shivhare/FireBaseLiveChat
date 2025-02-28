@@ -1,5 +1,6 @@
 package com.ganesh.hilt.firebase.livechat.service
 
+import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -8,12 +9,18 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.app.RemoteInput
+import com.ganesh.hilt.firebase.livechat.MyApplication
 import com.ganesh.hilt.firebase.livechat.R
+import com.ganesh.hilt.firebase.livechat.data.User
+import com.ganesh.hilt.firebase.livechat.repo.UserRepositoryEntryPoint
 import com.ganesh.hilt.firebase.livechat.ui.activity.ChatListActivity
-import com.ganesh.hilt.firebase.livechat.utils.FcmUserDetailViewModel
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -21,53 +28,61 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
+    private val userRepository by lazy {
+        EntryPointAccessors.fromApplication(
+            (MyApplication.myApplication.applicationContext as Application),
+            UserRepositoryEntryPoint::class.java
+        ).getUserRepository()
+    }
+
     override fun onCreate() {
         super.onCreate()
-
     }
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        Log.d("FCM", "New Token: $token")
+        Log.d("TAG_message", "New Token: $token")
         // You can send this new token to your server or Firestore
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
-        Log.d("FCM", "From: ${remoteMessage.from}")
+        Log.d("TAG_message", "From: ${remoteMessage.from}")
 
         // Check if the message contains data payload
         remoteMessage.data.isNotEmpty().let {
-            Log.d("FCM", "Message Data: ${remoteMessage.data}")
-            val senderName = remoteMessage.data["senderName"] ?: "Unknown"
-            val title = remoteMessage.data["title"] ?: "New Message"
-            val message = remoteMessage.data["message"] ?: "No message"
-            val receiverId = remoteMessage.data["receiverId"] ?: return
+            Log.d("TAG_message", "Message Data: ${remoteMessage.data}")
+            val senderUserModel = remoteMessage.data["senderUserModel"] ?: ""
+            Log.d("TAG_message", "Message Data:senderUserModel $senderUserModel")
 
-            FcmUserDetailViewModel.getViewModel()?.let {
+            if (senderUserModel.isEmpty()) return
+            val senderUser = Gson().fromJson(senderUserModel, User::class.java)
+
+            userRepository.getMyUserUpdates() { currentUser ->
+                Log.d("TAG_message", "getViewModel: userName " + currentUser.name)
                 GlobalScope.launch(Dispatchers.Main) {
-                    it.listenForUserStatus(receiverId)
+                    Log.d("TAG_message", "getViewModel:senderUser_uid " + senderUser.uid)
 
-                    it.userStatus.observeForever { userStatus ->
-                        if (userStatus.status == "online" && userStatus.typingTo == senderName) {
-                            Log.d("FCM", "User is online and in chat. Skipping notification.")
-                        } else {
-                            showNotification(title, message, senderName)
-                        }
+                    Log.d("TAG_message", "observeForever:status " + currentUser.userStatus.status)
+                    if (currentUser.userStatus.status == "online" /*&& currentUser.userStatus.typingTo == senderUser.uid*/) {
+                        Log.d(
+                            "TAG_message", "User is online and in chat. Skipping notification."
+                        )
+                    } else {
+                        showNotification(senderUser)
                     }
                 }
-            }
-
-            if (FcmUserDetailViewModel.getViewModel() == null) {
-                showNotification(title, message, senderName)
             }
         }
     }
 
-    private fun showNotification(title: String, message: String, senderName: String) {
+    private fun showNotification(senderUser: User) {
 
+        Log.d("TAG_message", "showNotification: ${senderUser.chatMessage.message}")
 
+        val notificationId = System.currentTimeMillis().toInt()
         val channelId = "chat_notifications"
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -89,12 +104,34 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             this, 0, intent, PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_MUTABLE
         )
 
+
+        // 🔹 Create the RemoteInput (Text Input Action)
+        val remoteInput = RemoteInput.Builder("key_text_reply").setLabel("Reply…").build()
+
+        // 🔹 Create PendingIntent for the Reply Action
+        val replyIntent = Intent(this, ReplyReceiver::class.java).apply {
+            putExtra("notificationId", notificationId)
+            putExtra("senderUserModel", Gson().toJson(senderUser))
+        }
+
+        val replyPendingIntent = PendingIntent.getBroadcast(
+            this, 0, replyIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+        )
+
+        // 🔹 Create the Reply Action
+        val replyAction = NotificationCompat.Action.Builder(
+            R.drawable.ic_reply, "Reply", replyPendingIntent
+        ).addRemoteInput(remoteInput).build()
+
         val notificationBuilder =
             NotificationCompat.Builder(this, channelId).setSmallIcon(R.drawable.ic_message)
-                .setContentTitle("$senderName: $title").setContentText(message).setAutoCancel(true)
-                .setPriority(NotificationCompat.PRIORITY_HIGH).setContentIntent(pendingIntent)
+                .setContentTitle("${senderUser.name}: New Message")
+                .setContentText(senderUser.chatMessage.message)
+                .addAction(replyAction) // 🔹 Add reply action
+                .setAutoCancel(true).setSilent(false).setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(pendingIntent)
 
-        notificationManager.notify(101, notificationBuilder.build())
+        notificationManager.notify(notificationId, notificationBuilder.build())
     }
 }
 

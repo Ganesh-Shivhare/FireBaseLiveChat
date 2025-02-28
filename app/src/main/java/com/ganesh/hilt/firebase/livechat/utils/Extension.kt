@@ -1,8 +1,10 @@
 package com.ganesh.hilt.firebase.livechat.utils
 
+import android.app.ActivityManager
 import android.content.Context
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.core.content.ContextCompat.getSystemService
 import com.ganesh.hilt.firebase.livechat.MyApplication.Companion.myApplication
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -85,4 +87,14 @@ fun Context.getAvatarImageList(): ArrayList<String> {
 
 private fun getAssetsStartPath(): String {
     return "file:///android_asset/"
+}
+
+fun Class<*>.isMyServiceRunning(context: Context): Boolean {
+    val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
+    for (service in manager!!.getRunningServices(Int.MAX_VALUE)) {
+        if (name == service.service.className) {
+            return true
+        }
+    }
+    return false
 }
