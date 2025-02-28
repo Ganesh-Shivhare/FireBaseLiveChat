@@ -10,6 +10,15 @@ android {
     namespace 'com.ganesh.hilt.firebase.livechat'
     compileSdk 35
 
+    signingConfigs {
+        release {
+            storeFile file('/Users/sujal/Desktop/Workspace/TestData/JKS/TheFashionBon.jks')
+            storePassword 'TheFashionBon'
+            keyAlias 'TheFashionBon'
+            keyPassword 'TheFashionBon'
+        }
+    }
+
     defaultConfig {
         applicationId "com.ganesh.hilt.firebase.livechat"
         minSdk 24
@@ -17,7 +26,9 @@ android {
         versionCode 1
         versionName "1.0.0"
 
+        multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.release // Use lightTheme signing config
     }
 
     buildTypes {
@@ -26,7 +37,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
