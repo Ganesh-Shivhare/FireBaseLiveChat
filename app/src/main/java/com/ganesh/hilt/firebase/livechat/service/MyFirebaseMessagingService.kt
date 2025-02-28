@@ -67,6 +67,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                     Log.d("TAG_message", "getViewModel:senderUser_uid " + senderUser.uid)
 
                     Log.d("TAG_message", "observeForever:status " + currentUser.userStatus.status)
+                    Log.d("TAG_message", "observeForever:notificationSent $notificationSent")
                     if (currentUser.userStatus.status == "online" /*&& currentUser.userStatus.typingTo == senderUser.uid*/) {
                         Log.d(
                             "TAG_message", "User is online and in chat. Skipping notification."
@@ -75,6 +76,9 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                         if (!notificationSent) {
                             notificationSent = true
                             showNotification(senderUser)
+                            userRepository.chatRepository.changeMessageStatus(
+                                senderUser.uid, 1, listOf(senderUser.chatMessage)
+                            )
                         }
                     }
                 }
@@ -86,7 +90,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         Log.d("TAG_message", "showNotification: ${senderUser.chatMessage.message}")
 
-        val notificationId = System.currentTimeMillis().toInt()
+        val notificationId = 115
         val channelId = "chat_notifications"
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

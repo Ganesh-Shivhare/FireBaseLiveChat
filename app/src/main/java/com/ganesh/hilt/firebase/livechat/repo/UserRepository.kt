@@ -12,7 +12,7 @@ import javax.inject.Singleton
 class UserRepository @Inject constructor(
     private val auth: FirebaseAuth,
     private val firestore: FirebaseFirestore,
-    private val chatRepository: ChatRepository
+    internal val chatRepository: ChatRepository
 ) {
 
     fun getAllUsers(onResult: (ArrayList<User>) -> Unit) {

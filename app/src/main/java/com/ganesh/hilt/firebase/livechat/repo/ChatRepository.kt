@@ -50,11 +50,16 @@ class ChatRepository @Inject constructor(
         }
     }
 
-    fun changeMessageStatus(receiverId: String, messageReadStatus: Int, messageList: List<ChatMessage>) {
+    fun changeMessageStatus(
+        receiverId: String, messageReadStatus: Int, messageList: List<ChatMessage>
+    ) {
         val userID = auth.currentUser?.uid ?: return
         messageList.forEach { chatMessage ->
             val senderId = chatMessage.senderId
-            if (chatMessage.messageStatus != 2) {
+            Log.d(
+                "TAG_update", "updateMessageReadStatus:messageStatus ${chatMessage.messageStatus}"
+            )
+            if (chatMessage.messageStatus != 2 && chatMessage.messageStatus != messageReadStatus) {
                 if (userID != senderId) {
                     Log.d("TAG_update", "updateMessageReadStatus:id ${chatMessage.messageId}")
                     Log.d("TAG_update", "updateMessageReadStatus:message ${chatMessage.message}")
@@ -75,8 +80,7 @@ class ChatRepository @Inject constructor(
             .orderBy("timestamp").addSnapshotListener { snapshot, _ ->
                 val messages = snapshot?.documents?.mapNotNull { document ->
                     val message = document.toObject(ChatMessage::class.java)
-                    Log.d("TAG", "getMessages:message $message")
-                    Log.d("TAG", "getMessages: " + document.id)
+                    Log.d("TAG", "getMessages:message ${Gson().toJson(message)}")
                     message?.messageId = document.id // Assign Firestore document ID
                     message
                 } ?: emptyList()

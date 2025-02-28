@@ -8,8 +8,9 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/clReceiver"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/_60sdp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -18,7 +19,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_message_receive"
-            android:orientation="horizontal"
+            android:minWidth="@dimen/_80sdp"
+            android:orientation="vertical"
             android:paddingHorizontal="@dimen/_10sdp"
             android:paddingVertical="@dimen/_5sdp"
             app:layout_constraintStart_toStartOf="parent"
@@ -28,7 +30,7 @@
                 android:id="@+id/tvReceivedMessage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_gravity="start|center"
                 android:fontFamily="@font/medium"
                 android:gravity="center"
                 android:minWidth="@dimen/_35sdp"
@@ -42,7 +44,7 @@
                 android:id="@+id/tvReceivedTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
+                android:layout_gravity="bottom|end"
                 android:fontFamily="@font/regular"
                 android:gravity="bottom"
                 android:text="09:15 Am"
@@ -65,8 +67,9 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/clSender"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_60sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -75,7 +78,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_message"
-            android:orientation="horizontal"
+            android:minWidth="@dimen/_80sdp"
+            android:orientation="vertical"
             android:paddingHorizontal="@dimen/_10sdp"
             android:paddingVertical="@dimen/_5sdp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -85,7 +89,7 @@
                 android:id="@+id/tvSendMessage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_gravity="start|center"
                 android:fontFamily="@font/medium"
                 android:gravity="center"
                 android:minWidth="@dimen/_35sdp"
@@ -95,26 +99,34 @@
                 android:textColor="@color/white"
                 android:textSize="@dimen/_11sdp" />
 
-            <TextView
-                android:id="@+id/tvSendTime"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:fontFamily="@font/regular"
-                android:gravity="bottom"
-                android:text="09:15 Am"
-                android:textColor="@color/subTextColor"
-                android:textSize="@dimen/_9sdp" />
+                android:layout_gravity="end"
+                android:gravity="end"
+                android:orientation="horizontal">
 
-            <ImageView
-                android:id="@+id/ivCheck"
-                android:layout_width="@dimen/_14sdp"
-                android:layout_height="@dimen/_14sdp"
-                android:layout_gravity="bottom"
-                android:gravity="bottom"
-                android:layout_marginStart="@dimen/_2sdp"
-                android:src="@drawable/ic_check"
-                app:tint="@color/subTextColor" />
+                <TextView
+                    android:id="@+id/tvSendTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:fontFamily="@font/regular"
+                    android:gravity="bottom"
+                    android:text="09:15 Am"
+                    android:textColor="@color/subTextColor"
+                    android:textSize="@dimen/_9sdp" />
+
+                <ImageView
+                    android:id="@+id/ivCheck"
+                    android:layout_width="@dimen/_14sdp"
+                    android:layout_height="@dimen/_14sdp"
+                    android:layout_gravity="bottom"
+                    android:layout_marginStart="@dimen/_2sdp"
+                    android:gravity="bottom"
+                    android:src="@drawable/ic_check"
+                    app:tint="@color/subTextColor" />
+            </LinearLayout>
         </LinearLayout>
 
         <ImageView
