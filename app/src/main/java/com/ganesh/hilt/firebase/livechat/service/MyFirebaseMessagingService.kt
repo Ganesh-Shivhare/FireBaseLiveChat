@@ -112,12 +112,27 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             this, 0, intent, PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_MUTABLE
         )
 
+        val notificationBuilder =
+            NotificationCompat.Builder(this, channelId).setSmallIcon(R.drawable.ic_message)
+                .setContentTitle("${senderUser.name}: New Message")
+                .setContentText(senderUser.chatMessage.message)
+                .addAction(getReplyAction(notificationId, senderUser)) // 🔹 Add reply action
+                .addAction(getMarkAsReadAction(notificationId, senderUser)).setAutoCancel(true)
+                .setSilent(false).setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(pendingIntent)
 
+        notificationManager.notify(
+            notificationId, notificationBuilder.build()
+        )
+    }
+
+    private fun getReplyAction(notificationId: Int, senderUser: User): NotificationCompat.Action {
         // 🔹 Create the RemoteInput (Text Input Action)
         val remoteInput = RemoteInput.Builder("key_text_reply").setLabel("Reply…").build()
 
         // 🔹 Create PendingIntent for the Reply Action
         val replyIntent = Intent(this, ReplyReceiver::class.java).apply {
+            action = "Reply_to_user"
             putExtra("notificationId", notificationId)
             putExtra("senderUserModel", Gson().toJson(senderUser))
         }
@@ -127,19 +142,34 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         )
 
         // 🔹 Create the Reply Action
-        val replyAction = NotificationCompat.Action.Builder(
+        return NotificationCompat.Action.Builder(
             R.drawable.ic_reply, "Reply", replyPendingIntent
         ).addRemoteInput(remoteInput).build()
+    }
 
-        val notificationBuilder =
-            NotificationCompat.Builder(this, channelId).setSmallIcon(R.drawable.ic_message)
-                .setContentTitle("${senderUser.name}: New Message")
-                .setContentText(senderUser.chatMessage.message)
-                .addAction(replyAction) // 🔹 Add reply action
-                .setAutoCancel(true).setSilent(false).setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setContentIntent(pendingIntent)
+    private fun getMarkAsReadAction(
+        notificationId: Int,
+        senderUser: User
+    ): NotificationCompat.Action {
 
-        notificationManager.notify(notificationId, notificationBuilder.build())
+        // Intent for "Mark as Read" action
+        val markAsReadIntent = Intent(this, ReplyReceiver::class.java).apply {
+            action = "MARK_AS_READ"
+            putExtra("notificationId", notificationId)
+            putExtra("senderUserModel", Gson().toJson(senderUser))
+        }
+        val markAsReadPendingIntent = PendingIntent.getBroadcast(
+            this,
+            notificationId,
+            markAsReadIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+
+        // 🔹 Create the Reply Action
+        return NotificationCompat.Action.Builder(
+            R.drawable.ic_check, "Mark as Read", markAsReadPendingIntent
+        ).build()
     }
 }
 
