@@ -22,12 +22,9 @@ open class BaseActivity : AppCompatActivity() {
     private val notificationManager by lazy {
         getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
-    private val fcmToken by lazy {
-        sharedPreferences.getString("fcmToken", "") ?: ""
-    }
 
     internal val sharedPreferences: SharedPreferences by lazy {
-        getSharedPreferences(getString(R.string.app_name), MODE_PRIVATE);
+        getSharedPreferences(getString(R.string.app_name), MODE_PRIVATE)
     }
     internal val editor: SharedPreferences.Editor by lazy { sharedPreferences.edit(); }
 
@@ -35,30 +32,10 @@ open class BaseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         notificationManager.cancelAll()
-        userDetailViewModel.updateUserStatus(
-            "online", fcmToken
-        ) // Mark user online when app is active
     }
 
     override fun onResume() {
         super.onResume()
-        userDetailViewModel.updateUserStatus(
-            "online", fcmToken
-        ) // Mark user online when app is active
         notificationManager.cancelAll()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        userDetailViewModel.updateUserStatus(
-            "offline", fcmToken
-        ) // Mark user online when app is active
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        userDetailViewModel.updateUserStatus(
-            "offline", fcmToken
-        ) // Mark user online when app is active
     }
 }
