@@ -2,9 +2,12 @@ package com.ganesh.hilt.firebase.livechat.ui.activity
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -20,11 +23,13 @@ import com.ganesh.hilt.firebase.livechat.databinding.ActivityChatBinding
 import com.ganesh.hilt.firebase.livechat.ui.BaseActivity
 import com.ganesh.hilt.firebase.livechat.ui.adapter.MessageListAdapter
 import com.ganesh.hilt.firebase.livechat.utils.formatDateTimeFromMillis
+import com.ganesh.hilt.firebase.livechat.utils.toReadableDate
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ChatActivity : BaseActivity() {
+    private var lastVisibleItemPosition: Int = 0
     private var isFirstTime = true
     private var _isUserAtBottom: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply {
         value = true
@@ -51,7 +56,7 @@ class ChatActivity : BaseActivity() {
         with(binding) {
             val receiver = intent?.getStringExtra("receiverUserData")
             receiverUserData = Gson().fromJson(receiver, User::class.java)
-            binding.rvChats.adapter = messageListAdapter
+            rvChats.adapter = messageListAdapter
 
             tvUserName.text = receiverUserData.name
             Glide.with(ivProfilePic).load(receiverUserData.avatarImagePath)
@@ -100,16 +105,54 @@ class ChatActivity : BaseActivity() {
             }
 
             rvChats.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                var animationStarted = false
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
 
                     val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-                    val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
+                    lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
+                    val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
                     val totalItemCount = layoutManager.itemCount
 
                     // Check if the user is at the bottom
                     _isUserAtBottom.value = lastVisibleItemPosition == totalItemCount - 1
                     ivScrollToBottom.isVisible = !(isUserAtBottom.value ?: true)
+
+                    if (firstVisiblePosition != RecyclerView.NO_POSITION) {
+                        val topMessage = messageListAdapter.messageList[firstVisiblePosition]
+                        val newDate = topMessage.timestamp.toReadableDate()
+                        Log.d("TAG_date", "onScrolled: $newDate")
+                        tvDateTime.text = newDate // Update your floating date header
+
+                        if (!animationStarted && !tvDateTime.isVisible) {
+                            showDateTime()
+                        }
+
+                        hideDateTimeHandler.removeCallbacks(hideDateTimeRunnable)
+                        hideDateTimeHandler.postDelayed(hideDateTimeRunnable, 2500)
+                    }
+                }
+
+                private fun showDateTime() {
+                    animationStarted = true
+                    tvDateTime.isVisible = true
+                    val animation =
+                        AnimationUtils.loadAnimation(this@ChatActivity, R.anim.top_bottom)
+                    binding.tvDateTime.startAnimation(animation)
+
+                    animation.setAnimationListener(object : Animation.AnimationListener {
+                        override fun onAnimationStart(animation: Animation?) {
+
+                        }
+
+                        override fun onAnimationEnd(animation: Animation?) {
+                            animationStarted = false
+                        }
+
+                        override fun onAnimationRepeat(animation: Animation?) {
+
+                        }
+                    })
                 }
             })
         }
@@ -131,10 +174,11 @@ class ChatActivity : BaseActivity() {
         chatViewModel.getMessages(receiverUserData.uid) {
             Log.d("TAG_message", "setupObservers: " + it.size)
             messageListAdapter.updateUserList(it)
+            binding.tvDateTime.isVisible = it.isNotEmpty()
 
             if (isFirstTime || isUserAtBottom.value!!) {
                 if (messageListAdapter.itemCount > 0) {
-                    binding.rvChats.smoothScrollToPosition(it.size - 1)
+                    binding.rvChats.scrollToPosition(it.size - 1)
                 }
                 isFirstTime = true
             }
@@ -194,10 +238,35 @@ class ChatActivity : BaseActivity() {
             // Simulate typing event
             userDetailViewModel.setTypingStatus(imeVisible)
 
-            // Consume the IME insets to prevent extra space at the bottom
-            val insetsConsumed = insets.consumeSystemWindowInsets()
-            ViewCompat.onApplyWindowInsets(view, insetsConsumed)
+            if (imeVisible) {
+                binding.rvChats.scrollToPosition(lastVisibleItemPosition)
+            }
+
+            // Consume the IME insets properly
+            insets.toWindowInsets()?.let {
+                ViewCompat.onApplyWindowInsets(view, WindowInsetsCompat.CONSUMED)
+            }
+
             insets
         }
+    }
+
+    private val hideDateTimeHandler by lazy { Handler(mainLooper) }
+    private var hideDateTimeRunnable: Runnable = Runnable {
+        val animation = AnimationUtils.loadAnimation(this, R.anim.bottom_top)
+        animation.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(animation: Animation?) {
+
+            }
+
+            override fun onAnimationEnd(animation: Animation?) {
+                binding.tvDateTime.isVisible = false
+            }
+
+            override fun onAnimationRepeat(animation: Animation?) {
+
+            }
+        })
+        binding.tvDateTime.startAnimation(animation)
     }
 }

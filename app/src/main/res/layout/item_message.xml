@@ -6,13 +6,32 @@
     android:layout_marginHorizontal="@dimen/_5sdp"
     android:layout_marginBottom="@dimen/_3sdp">
 
+    <TextView
+        android:id="@+id/tvDateTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:background="@drawable/bg_button"
+        android:backgroundTint="@color/subTextColor"
+        android:fontFamily="@font/medium"
+        android:paddingHorizontal="@dimen/_5sdp"
+        android:paddingVertical="@dimen/_2sdp"
+        android:text="Today"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_9sdp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/clReceiver"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/_60sdp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/tvDateTime">
 
         <LinearLayout
             android:id="@+id/llMessageReceiver"
@@ -32,7 +51,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start|center"
                 android:fontFamily="@font/medium"
-                android:gravity="center"
+                android:gravity="center_vertical"
                 android:minWidth="@dimen/_35sdp"
                 android:minHeight="@dimen/_25sdp"
                 android:paddingEnd="@dimen/_10sdp"
@@ -71,7 +90,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_60sdp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/tvDateTime">
 
         <LinearLayout
             android:id="@+id/llMessageSender"
@@ -91,7 +110,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start|center"
                 android:fontFamily="@font/medium"
-                android:gravity="center"
+                android:gravity="center_vertical"
                 android:minWidth="@dimen/_35sdp"
                 android:minHeight="@dimen/_25sdp"
                 android:paddingEnd="@dimen/_10sdp"

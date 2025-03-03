@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat.getSystemService
 import com.ganesh.hilt.firebase.livechat.MyApplication.Companion.myApplication
 import java.io.IOException
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -37,6 +38,31 @@ fun Long.formatDateTimeFromMillis(): String {
         val sdf =
             SimpleDateFormat("hh:mm a dd-MM-yyyy", Locale.getDefault()) // 12-hour format with AM/PM
         sdf.format(Date(this))
+    }
+}
+
+fun Long.toReadableDate(): String {
+    val currentTime = Calendar.getInstance()
+    val givenTime = Calendar.getInstance().apply { timeInMillis = this@toReadableDate }
+
+    return when {
+        // Check if the given time is today
+        currentTime.get(Calendar.YEAR) == givenTime.get(Calendar.YEAR) &&
+                currentTime.get(Calendar.DAY_OF_YEAR) == givenTime.get(Calendar.DAY_OF_YEAR) -> {
+            "Today"
+        }
+
+        // Check if the given time is yesterday
+        currentTime.get(Calendar.YEAR) == givenTime.get(Calendar.YEAR) &&
+                currentTime.get(Calendar.DAY_OF_YEAR) - givenTime.get(Calendar.DAY_OF_YEAR) == 1 -> {
+            "Yesterday"
+        }
+
+        // Otherwise, return formatted date (e.g., 12 Feb 2025)
+        else -> {
+            val dateFormat = SimpleDateFormat("dd MMM, yyyy", Locale.getDefault())
+            dateFormat.format(Date(this))
+        }
     }
 }
 
@@ -83,7 +109,6 @@ fun Context.getAvatarImageList(): ArrayList<String> {
 
     return frameModels
 }
-
 
 private fun getAssetsStartPath(): String {
     return "file:///android_asset/"

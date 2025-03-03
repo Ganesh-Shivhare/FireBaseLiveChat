@@ -12,6 +12,8 @@ import com.ganesh.hilt.firebase.livechat.data.ChatMessage
 import com.ganesh.hilt.firebase.livechat.databinding.ItemMessageBinding
 import com.ganesh.hilt.firebase.livechat.ui.BaseActivity
 import com.ganesh.hilt.firebase.livechat.utils.formatTimeFromMillis
+import com.ganesh.hilt.firebase.livechat.utils.toReadableDate
+import java.util.Calendar
 
 @SuppressLint("NotifyDataSetChanged")
 class MessageListAdapter(private val baseActivity: BaseActivity) :
@@ -79,6 +81,17 @@ class MessageListAdapter(private val baseActivity: BaseActivity) :
                 tvReceivedMessage.text = chatMessage.message
                 tvReceivedTime.text = chatMessage.timestamp.formatTimeFromMillis()
             }
+
+            // Show date header if the message is the first of the day
+            if (position == 0 || isNewDay(
+                    messageList[position - 1].timestamp, chatMessage.timestamp
+                )
+            ) {
+                tvDateTime.text = chatMessage.timestamp.toReadableDate()
+                tvDateTime.isVisible = true
+            } else {
+                tvDateTime.isVisible = false
+            }
         }
     }
 
@@ -107,6 +120,15 @@ class MessageListAdapter(private val baseActivity: BaseActivity) :
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
             return oldList[oldItemPosition] == newList[newItemPosition]
         }
+    }
+
+    private fun isNewDay(prevTimestamp: Long, currentTimestamp: Long): Boolean {
+        val prevDate = Calendar.getInstance().apply { timeInMillis = prevTimestamp }
+        val currentDate = Calendar.getInstance().apply { timeInMillis = currentTimestamp }
+
+        return prevDate.get(Calendar.YEAR) != currentDate.get(Calendar.YEAR) || prevDate.get(
+            Calendar.DAY_OF_YEAR
+        ) != currentDate.get(Calendar.DAY_OF_YEAR)
     }
 }
 
