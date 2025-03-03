@@ -5,12 +5,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.text.InputType
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import com.ganesh.hilt.firebase.livechat.R
 import com.ganesh.hilt.firebase.livechat.databinding.ActivityLoginBinding
 import com.ganesh.hilt.firebase.livechat.ui.BaseActivity
+import com.ganesh.hilt.firebase.livechat.utils.Debug
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -102,22 +102,20 @@ class LoginActivity : BaseActivity() {
     private fun setupObservers() {
         loginViewModel.authResult.observe(this) { result ->
             result.onSuccess {
-                Log.d("TAG_userData", "onCreate: " + it)
-                Toast.makeText(this, "Login Successful: $it", Toast.LENGTH_LONG).show()
+                Debug.d("TAG_userData", "onCreate: $it")
+                Toast.makeText(this, "Login Successful.", Toast.LENGTH_LONG).show()
                 loginViewModel.getUserData()
             }.onFailure {
-                Toast.makeText(this, "Login Failed: ${it.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Login Failed.", Toast.LENGTH_LONG).show()
             }
         }
 
         loginViewModel.userData.observe(this) { result ->
             result.onSuccess {
-                Log.d("TAG_userData", "onCreate: " + it)
-                Toast.makeText(this, "User Data: $it", Toast.LENGTH_LONG).show()
-
+                Debug.d("TAG_userData", "onCreate: $it")
                 userDetailViewModel.isUserDataAvailable()
             }.onFailure {
-                Toast.makeText(this, "Login Failed: ${it.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Login Failed.", Toast.LENGTH_LONG).show()
             }
         }
 
@@ -149,10 +147,10 @@ class LoginActivity : BaseActivity() {
     private val googleSignInLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-            Log.d("TAG_test", "googleSignInLauncher:isComplete " + task.isComplete)
-            Log.d("TAG_test", "googleSignInLauncher:isCanceled " + task.isCanceled)
-            Log.d("TAG_test", "googleSignInLauncher:isSuccessful " + task.isSuccessful)
-            Log.d("TAG_test", "googleSignInLauncher: " + task.result?.idToken)
+            Debug.d("TAG_test", "googleSignInLauncher:isComplete " + task.isComplete)
+            Debug.d("TAG_test", "googleSignInLauncher:isCanceled " + task.isCanceled)
+            Debug.d("TAG_test", "googleSignInLauncher:isSuccessful " + task.isSuccessful)
+            Debug.d("TAG_test", "googleSignInLauncher: " + task.result?.idToken)
             task.result?.idToken?.let {
                 loginViewModel.loginWithGoogle(it)
             }
@@ -166,7 +164,7 @@ class LoginActivity : BaseActivity() {
 
             override fun onVerificationFailed(e: FirebaseException) {
                 Toast.makeText(
-                    this@LoginActivity, "Verification Failed: ${e.message}", Toast.LENGTH_LONG
+                    this@LoginActivity, "Verification Failed.", Toast.LENGTH_LONG
                 ).show()
             }
 

@@ -2,10 +2,10 @@ package com.ganesh.hilt.firebase.livechat.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import com.ganesh.hilt.firebase.livechat.databinding.ActivityFirstBinding
 import com.ganesh.hilt.firebase.livechat.ui.BaseActivity
+import com.ganesh.hilt.firebase.livechat.utils.Debug
 import com.ganesh.hilt.firebase.livechat.utils.GsonUtils
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -25,7 +25,7 @@ class FirstActivity : BaseActivity() {
     private fun setupObservers() {
         loginViewModel.isLoggedIn.observe(this) { result ->
             result.onSuccess {
-                Toast.makeText(this, "Login Successful: $it", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Login Successful.", Toast.LENGTH_LONG).show()
                 if (it) {
                     userDetailViewModel.isUserDataAvailable()
                 } else {
@@ -33,7 +33,7 @@ class FirstActivity : BaseActivity() {
                     finish()
                 }
             }.onFailure {
-                Toast.makeText(this, "Login Failed: ${it.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Login Failed.", Toast.LENGTH_LONG).show()
             }
         }
 
@@ -55,7 +55,7 @@ class FirstActivity : BaseActivity() {
 
         userDetailViewModel.myUserProfile.observe(this) { result ->
             result.onSuccess {
-                Log.d("TAG_message", "setupObservers:111 " + GsonUtils.modelToJson(it))
+                Debug.d("TAG_message", "setupObservers:111 " + GsonUtils.modelToJson(it))
                 preferenceClass.setPrefValue("my_profile_data", GsonUtils.modelToJson(it))
             }.onFailure {
 

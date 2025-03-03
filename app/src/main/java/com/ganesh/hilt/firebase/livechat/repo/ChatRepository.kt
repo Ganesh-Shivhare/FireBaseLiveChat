@@ -1,9 +1,9 @@
 package com.ganesh.hilt.firebase.livechat.repo
 
-import android.util.Log
 import com.ganesh.hilt.firebase.livechat.MyApplication
 import com.ganesh.hilt.firebase.livechat.data.ChatMessage
 import com.ganesh.hilt.firebase.livechat.data.User
+import com.ganesh.hilt.firebase.livechat.utils.Debug
 import com.ganesh.hilt.firebase.livechat.utils.GsonUtils
 import com.ganesh.hilt.firebase.livechat.utils.getAccessToken
 import com.google.firebase.auth.FirebaseAuth
@@ -56,13 +56,13 @@ class ChatRepository @Inject constructor(
         val userID = auth.currentUser?.uid ?: return
         messageList.forEach { chatMessage ->
             val senderId = chatMessage.senderId
-            Log.d(
+            Debug.d(
                 "TAG_update", "updateMessageReadStatus:messageStatus ${chatMessage.messageStatus}"
             )
             if (chatMessage.messageStatus != 2 && chatMessage.messageStatus != messageReadStatus) {
                 if (userID != senderId) {
-                    Log.d("TAG_update", "updateMessageReadStatus:id ${chatMessage.messageId}")
-                    Log.d("TAG_update", "updateMessageReadStatus:message ${chatMessage.message}")
+                    Debug.d("TAG_update", "updateMessageReadStatus:id ${chatMessage.messageId}")
+                    Debug.d("TAG_update", "updateMessageReadStatus:message ${chatMessage.message}")
                     val chatId =
                         if (userID < receiverId) "$userID-$receiverId" else "$receiverId-$userID"
 
@@ -80,7 +80,7 @@ class ChatRepository @Inject constructor(
             .orderBy("timestamp").addSnapshotListener { snapshot, _ ->
                 val messages = snapshot?.documents?.mapNotNull { document ->
                     val message = document.toObject(ChatMessage::class.java)
-                    Log.d("TAG", "getMessages:message ${GsonUtils.modelToJson(message)}")
+                    Debug.d("TAG", "getMessages:message ${GsonUtils.modelToJson(message)}")
                     message?.messageId = document.id // Assign Firestore document ID
                     message
                 } ?: emptyList()
@@ -95,10 +95,10 @@ class ChatRepository @Inject constructor(
         if (receiverUser.userToken.isEmpty()) return
 
         val userToken = receiverUser.userToken
-        Log.d("TAG_userToken", "sendFCMNotification:userToken $userToken")
+        Debug.d("TAG_userToken", "sendFCMNotification:userToken $userToken")
 
         getAccessToken(MyApplication.myApplication) { accessToken ->
-            Log.d("TAG_userToken", "sendFCMNotification:accessToken $accessToken")
+            Debug.d("TAG_userToken", "sendFCMNotification:accessToken $accessToken")
             CoroutineScope(Dispatchers.IO).launch {
                 if (accessToken.isNullOrEmpty()) {
                     println(" Failed to retrieve access token!")
@@ -130,10 +130,10 @@ class ChatRepository @Inject constructor(
 
                 try {
                     val response = client.newCall(request).execute()
-                    Log.d("TAG_userToken", "sendFCMNotification:execute ")
-                    Log.d("TAG_userToken", "sendFCMNotification:body ${response.body?.string()}")
+                    Debug.d("TAG_userToken", "sendFCMNotification:execute ")
+                    Debug.d("TAG_userToken", "sendFCMNotification:body ${response.body?.string()}")
                 } catch (e: Exception) {
-                    Log.d("TAG_userToken", "sendFCMNotification:Exception ${e.message}")
+                    Debug.d("TAG_userToken", "sendFCMNotification:Exception ${e.message}")
                     e.printStackTrace()
                 }
             }

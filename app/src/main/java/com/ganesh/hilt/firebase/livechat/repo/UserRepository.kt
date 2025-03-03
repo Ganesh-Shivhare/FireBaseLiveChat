@@ -1,8 +1,8 @@
 package com.ganesh.hilt.firebase.livechat.repo
 
-import android.util.Log
 import com.ganesh.hilt.firebase.livechat.data.User
 import com.ganesh.hilt.firebase.livechat.data.UserStatus
+import com.ganesh.hilt.firebase.livechat.utils.Debug
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
@@ -18,7 +18,7 @@ class UserRepository @Inject constructor(
     fun getAllUsers(onResult: (ArrayList<User>) -> Unit) {
         firestore.collection("users").addSnapshotListener { snapshots, error ->
             if (error != null) {
-                Log.e("Firestore", "Error listening for chats", error)
+                Debug.e("Firestore", "Error listening for chats: $error")
                 return@addSnapshotListener
             }
 
@@ -37,7 +37,7 @@ class UserRepository @Inject constructor(
         val users = ArrayList<User>()
 
         getAllUsers {
-            Log.d("TAG_searchResults", "addOnSuccessListener: " + it.size)
+            Debug.d("TAG_searchResults", "addOnSuccessListener: " + it.size)
             it.forEach { userData ->
                 users.add(userData)
             }
@@ -63,7 +63,7 @@ class UserRepository @Inject constructor(
         val users = ArrayList<User>()
 
         getAllUsers {
-            Log.d("TAG_searchResults", "addOnSuccessListener: " + it.size)
+            Debug.d("TAG_searchResults", "addOnSuccessListener: " + it.size)
             it.forEach { userData ->
                 users.add(userData)
             }
@@ -133,7 +133,7 @@ class UserRepository @Inject constructor(
         )
 
         firestore.collection("users").document(userModel.uid).set(user).addOnSuccessListener {
-            Log.d("TAG_dataInserted", "insertUserData: $it")
+            Debug.d("TAG_dataInserted", "insertUserData: $it")
             result(Result.success(userModel))
         }.addOnFailureListener {
             result(Result.failure(it))
@@ -145,7 +145,7 @@ class UserRepository @Inject constructor(
 
         firestore.collection("fireChats").addSnapshotListener { snapshots, error ->
             if (error != null) {
-                Log.e("TAG_currentUsers", "Error listening for chats", error)
+                Debug.e("TAG_currentUsers", "Error listening for chats $error")
                 return@addSnapshotListener
             }
 
@@ -154,7 +154,7 @@ class UserRepository @Inject constructor(
 
                 snapshots.documents.forEachIndexed { index, document ->
                     val receiverId = document.id.replace(uid, "").replace("-", "")
-                    Log.d("TAG_currentUsers", "Found chat: ${receiverId}")
+                    Debug.d("TAG_currentUsers", "Found chat: $receiverId")
 
                     getUserById(receiverId) { userData ->
                         chatRepository.getMessages(receiverId) { chatMessages ->
@@ -177,11 +177,11 @@ class UserRepository @Inject constructor(
                             result(userChatList)
                         }
                     }
-                    Log.d("ChatUpdate", "Chat ID: ${document.id}")
+                    Debug.d("ChatUpdate", "Chat ID: ${document.id}")
                 }
                 // Handle the updated chat list
             } else {
-                Log.d("ChatUpdate", "No chats available")
+                Debug.d("ChatUpdate", "No chats available")
             }
         }
     }
@@ -304,9 +304,9 @@ class UserRepository @Inject constructor(
         }
 
         userRef.update(statusMap).addOnSuccessListener {
-            Log.d("TAG_UserStatusService", "Updated to $status")
+            Debug.d("TAG_UserStatusService", "Updated to $status")
         }.addOnFailureListener { e ->
-            Log.e("TAG_UserStatusService", "Failed to update status: ", e)
+            Debug.e("TAG_UserStatusService", "Failed to update status: $e")
         }
     }
 

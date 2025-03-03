@@ -3,7 +3,6 @@ package com.ganesh.hilt.firebase.livechat.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import com.bumptech.glide.Glide
@@ -12,6 +11,7 @@ import com.ganesh.hilt.firebase.livechat.data.User
 import com.ganesh.hilt.firebase.livechat.databinding.ActivityProfileSetupBinding
 import com.ganesh.hilt.firebase.livechat.ui.BaseActivity
 import com.ganesh.hilt.firebase.livechat.ui.dialog.AvatarSelectionDialog
+import com.ganesh.hilt.firebase.livechat.utils.Debug
 import com.ganesh.hilt.firebase.livechat.utils.GsonUtils
 import com.ganesh.hilt.firebase.livechat.utils.getAvatarImageList
 import com.ganesh.hilt.firebase.livechat.viewModel.FirebaseViewModel
@@ -103,13 +103,13 @@ class ProfileSetupActivity : BaseActivity() {
 
         userDetailViewModel.myUserProfile.observe(this) { result ->
             result.onSuccess {
-                Log.d("TAG_dataInserted", "onSuccess: " + GsonUtils.modelToJson(it))
+                Debug.d("TAG_dataInserted", "onSuccess: " + GsonUtils.modelToJson(it))
                 startActivity(Intent(
                     this@ProfileSetupActivity, ChatListActivity::class.java
                 ).apply { addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK) })
                 finish()
             }.onFailure {
-                Log.d("TAG_dataInserted", "onFailure: " + it.message)
+                Debug.d("TAG_dataInserted", "onFailure: " + it.message)
             }
         }
     }

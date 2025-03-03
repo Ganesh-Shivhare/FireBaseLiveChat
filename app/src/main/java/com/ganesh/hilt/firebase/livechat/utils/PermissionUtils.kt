@@ -4,7 +4,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.Settings
-import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import com.ganesh.hilt.firebase.livechat.ui.BaseActivity
@@ -33,7 +32,7 @@ class PermissionUtils(var context: BaseActivity) {
                     } else {
                         if (preferencesClass.getPrefValue(permission, false) as Boolean) {
                             showPermissionDialog = true
-                            Log.d("TAG_value", "onCreate:22 $permission")
+                            Debug.d("TAG_value", "onCreate:22 $permission")
                         }
                     }
                 }

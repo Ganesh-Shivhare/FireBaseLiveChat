@@ -7,7 +7,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.RemoteInput
 import com.ganesh.hilt.firebase.livechat.MyApplication
@@ -15,6 +14,7 @@ import com.ganesh.hilt.firebase.livechat.R
 import com.ganesh.hilt.firebase.livechat.data.User
 import com.ganesh.hilt.firebase.livechat.repo.UserRepositoryEntryPoint
 import com.ganesh.hilt.firebase.livechat.ui.activity.ChatListActivity
+import com.ganesh.hilt.firebase.livechat.utils.Debug
 import com.ganesh.hilt.firebase.livechat.utils.GsonUtils
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -41,7 +41,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        Log.d("TAG_message", "New Token: $token")
+        Debug.d("TAG_message", "New Token: $token")
         // You can send this new token to your server or Firestore
     }
 
@@ -49,27 +49,27 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
-        Log.d("TAG_message", "From: ${remoteMessage.from}")
+        Debug.d("TAG_message", "From: ${remoteMessage.from}")
 
         // Check if the message contains data payload
         var notificationSent = false
         remoteMessage.data.isNotEmpty().let {
-            Log.d("TAG_message", "Message Data: ${remoteMessage.data}")
+            Debug.d("TAG_message", "Message Data: ${remoteMessage.data}")
             val senderUserModel = remoteMessage.data["senderUserModel"] ?: ""
-            Log.d("TAG_message", "Message Data:senderUserModel $senderUserModel")
+            Debug.d("TAG_message", "Message Data:senderUserModel $senderUserModel")
 
             if (senderUserModel.isEmpty()) return
             val senderUser = GsonUtils.jsonToModel(senderUserModel, User::class.java)
 
             userRepository.getMyUserUpdates() { currentUser ->
-                Log.d("TAG_message", "getViewModel: userName " + currentUser.name)
+                Debug.d("TAG_message", "getViewModel: userName " + currentUser.name)
                 GlobalScope.launch(Dispatchers.Main) {
-                    Log.d("TAG_message", "getViewModel:senderUser_uid " + senderUser.uid)
+                    Debug.d("TAG_message", "getViewModel:senderUser_uid " + senderUser.uid)
 
-                    Log.d("TAG_message", "observeForever:status " + currentUser.userStatus.status)
-                    Log.d("TAG_message", "observeForever:notificationSent $notificationSent")
+                    Debug.d("TAG_message", "observeForever:status " + currentUser.userStatus.status)
+                    Debug.d("TAG_message", "observeForever:notificationSent $notificationSent")
                     if (currentUser.userStatus.status == "online" /*&& currentUser.userStatus.typingTo == senderUser.uid*/) {
-                        Log.d(
+                        Debug.d(
                             "TAG_message", "User is online and in chat. Skipping notification."
                         )
                     } else {
@@ -88,7 +88,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     private fun showNotification(senderUser: User) {
 
-        Log.d("TAG_message", "showNotification: ${senderUser.chatMessage.message}")
+        Debug.d("TAG_message", "showNotification: ${senderUser.chatMessage.message}")
 
         val notificationId = 115
         val channelId = "chat_notifications"
