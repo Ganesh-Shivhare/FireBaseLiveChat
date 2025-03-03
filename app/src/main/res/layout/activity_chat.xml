@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.activity.ChatActivity">
+
+    <LinearLayout
+        android:id="@+id/llHeader"
+        android:layout_width="match_parent"
+        android:layout_height="?android:actionBarSize"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/ivBack"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:padding="@dimen/_10sdp"
+            android:src="@drawable/ic_back" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivProfilePic"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:paddingVertical="@dimen/_5sdp"
+            android:src="@drawable/ic_profile"
+            app:shapeAppearanceOverlay="@style/CircleImage" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/_10sdp">
+
+            <TextView
+                android:id="@+id/tvUserName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/medium"
+                android:text="Name"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_12sdp" />
+
+            <TextView
+                android:id="@+id/tvStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/medium"
+                android:text=""
+                android:textColor="@color/subTextColor"
+                android:textSize="@dimen/_9sdp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvChats"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:clipToPadding="true"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/_10sdp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@id/llMessageBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/llHeader" />
+
+    <TextView
+        android:id="@+id/tvDateTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:background="@drawable/bg_button"
+        android:backgroundTint="@color/subTextColor"
+        android:fontFamily="@font/medium"
+        android:paddingHorizontal="@dimen/_5sdp"
+        android:paddingVertical="@dimen/_2sdp"
+        android:text="Today"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_9sdp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/llHeader" />
+
+    <ImageView
+        android:id="@+id/ivScrollToBottom"
+        android:layout_width="@dimen/_25sdp"
+        android:layout_height="@dimen/_25sdp"
+        android:layout_marginBottom="@dimen/_20sdp"
+        android:background="@drawable/bg_button"
+        android:backgroundTint="@color/subTextColor"
+        android:padding="@dimen/_5sdp"
+        android:rotation="-90"
+        android:src="@drawable/ic_back"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/rvChats"
+        app:layout_constraintEnd_toEndOf="@+id/rvChats" />
+
+    <LinearLayout
+        android:id="@+id/llMessageBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_15sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_15sdp"
+        android:maxHeight="@dimen/_100sdp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <EditText
+            android:id="@+id/etMessage"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_button"
+            android:backgroundTint="@color/black"
+            android:hint="Type message..."
+            android:minHeight="@dimen/_40sdp"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:textColor="@color/white"
+            android:textColorHint="@color/subTextColor"
+            android:textSize="@dimen/_12sdp" />
+
+        <ImageView
+            android:id="@+id/ivSend"
+            android:layout_width="@dimen/_35sdp"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:background="@drawable/bg_button"
+            android:padding="@dimen/_9sdp"
+            android:rotation="-45"
+            android:src="@drawable/ic_send" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

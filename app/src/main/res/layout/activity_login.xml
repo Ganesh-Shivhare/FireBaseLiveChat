@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:id="@+id/llPhoneNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/etPhoneNumber"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_35sdp"
+            android:background="@drawable/edt_selector"
+            android:fontFamily="@font/regular"
+            android:hint="Enter Phone Number"
+            android:inputType="phone"
+            android:maxLength="15"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:textColor="@color/white"
+            android:textColorHint="@color/subTextColor"
+            android:textSize="@dimen/_12sdp" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_marginTop="@dimen/_5sdp">
+
+            <EditText
+                android:id="@+id/etOtp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/edt_selector"
+                android:fontFamily="@font/regular"
+                android:hint="Enter OTP"
+                android:inputType="number"
+                android:maxLength="6"
+                android:paddingHorizontal="@dimen/_10sdp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/subTextColor"
+                android:textSize="@dimen/_12sdp" />
+
+            <TextView
+                android:id="@+id/btnSendCode"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:fontFamily="@font/medium"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/_10sdp"
+                android:text="Send OTP"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_12sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/btnVerifyCode"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:background="@drawable/selector_button"
+            android:backgroundTint="@color/themeColor"
+            android:fontFamily="@font/semi_bold"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/_25sdp"
+            android:text="Verify OTP"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12sdp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <EditText
+            android:id="@+id/etEmail"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:background="@drawable/edt_selector"
+            android:fontFamily="@font/regular"
+            android:hint="Email"
+            android:inputType="textEmailAddress"
+            android:paddingHorizontal="@dimen/_8sdp"
+            android:textColorHint="@color/subTextColor"
+            android:textSize="@dimen/_12sdp" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/etPassword"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/edt_selector"
+                android:fontFamily="@font/regular"
+                android:hint="Password"
+                android:inputType="textPassword"
+                android:maxLength="15"
+                android:paddingHorizontal="@dimen/_8sdp"
+                android:textColorHint="@color/subTextColor"
+                android:textSize="@dimen/_12sdp" />
+
+            <ImageView
+                android:id="@+id/ivShowPassword"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:alpha="0.7"
+                android:padding="@dimen/_8sdp"
+                android:src="@drawable/select_show_password"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <Button
+            android:id="@+id/btnLoginEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:text="Login with Email" />
+    </LinearLayout>
+
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/btnLoginGoogle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp" />
+</LinearLayout>
