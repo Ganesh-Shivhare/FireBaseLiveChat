@@ -4,10 +4,10 @@ import android.util.Log
 import com.ganesh.hilt.firebase.livechat.MyApplication
 import com.ganesh.hilt.firebase.livechat.data.ChatMessage
 import com.ganesh.hilt.firebase.livechat.data.User
+import com.ganesh.hilt.firebase.livechat.utils.GsonUtils
 import com.ganesh.hilt.firebase.livechat.utils.getAccessToken
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -80,7 +80,7 @@ class ChatRepository @Inject constructor(
             .orderBy("timestamp").addSnapshotListener { snapshot, _ ->
                 val messages = snapshot?.documents?.mapNotNull { document ->
                     val message = document.toObject(ChatMessage::class.java)
-                    Log.d("TAG", "getMessages:message ${Gson().toJson(message)}")
+                    Log.d("TAG", "getMessages:message ${GsonUtils.modelToJson(message)}")
                     message?.messageId = document.id // Assign Firestore document ID
                     message
                 } ?: emptyList()
@@ -113,7 +113,10 @@ class ChatRepository @Inject constructor(
                         put("token", userToken)
                         put("data", JSONObject().apply {
                             put("title", "New Message")
-                            put("senderUserModel", Gson().toJson(senderUser))  // Custom data
+                            put(
+                                "senderUserModel",
+                                GsonUtils.modelToJson(senderUser)
+                            )  // Custom data
                         })
                     })
                 }

@@ -22,13 +22,14 @@ import com.ganesh.hilt.firebase.livechat.data.User
 import com.ganesh.hilt.firebase.livechat.databinding.ActivityChatBinding
 import com.ganesh.hilt.firebase.livechat.ui.BaseActivity
 import com.ganesh.hilt.firebase.livechat.ui.adapter.MessageListAdapter
+import com.ganesh.hilt.firebase.livechat.utils.GsonUtils
 import com.ganesh.hilt.firebase.livechat.utils.formatDateTimeFromMillis
 import com.ganesh.hilt.firebase.livechat.utils.toReadableDate
-import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ChatActivity : BaseActivity() {
+    private var firstVisiblePosition: Int = 0
     private var lastVisibleItemPosition: Int = 0
     private var isFirstTime = true
     private var _isUserAtBottom: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply {
@@ -54,8 +55,8 @@ class ChatActivity : BaseActivity() {
 
     private fun initializeView() {
         with(binding) {
-            val receiver = intent?.getStringExtra("receiverUserData")
-            receiverUserData = Gson().fromJson(receiver, User::class.java)
+            val receiver = intent?.getStringExtra("receiverUserData").toString()
+            receiverUserData = GsonUtils.jsonToModel(receiver, User::class.java)
             rvChats.adapter = messageListAdapter
 
             tvUserName.text = receiverUserData.name
@@ -111,7 +112,7 @@ class ChatActivity : BaseActivity() {
 
                     val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                     lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
-                    val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
+                    firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
                     val totalItemCount = layoutManager.itemCount
 
                     // Check if the user is at the bottom
@@ -124,8 +125,11 @@ class ChatActivity : BaseActivity() {
                         Log.d("TAG_date", "onScrolled: $newDate")
                         tvDateTime.text = newDate // Update your floating date header
 
-                        if (!animationStarted && !tvDateTime.isVisible) {
+                        if (!animationStarted && !tvDateTime.isVisible && firstVisiblePosition != 0) {
                             showDateTime()
+                        }
+                        if (firstVisiblePosition == 0) {
+                            tvDateTime.isVisible = false
                         }
 
                         hideDateTimeHandler.removeCallbacks(hideDateTimeRunnable)
@@ -194,7 +198,7 @@ class ChatActivity : BaseActivity() {
 
         // Observe User Status Changes
         userDetailViewModel.userStatus.observe(this) { userStatus ->
-            Log.d("UserStatus", "User is ${Gson().toJson(userStatus)}")
+            Log.d("UserStatus", "User is ${GsonUtils.modelToJson(userStatus)}")
             if (userStatus.lastSeen > 0) {
                 binding.tvStatus.isVisible = true
 

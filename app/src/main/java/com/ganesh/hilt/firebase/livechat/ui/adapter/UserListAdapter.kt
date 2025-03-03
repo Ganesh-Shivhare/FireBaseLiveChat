@@ -14,8 +14,8 @@ import com.ganesh.hilt.firebase.livechat.data.User
 import com.ganesh.hilt.firebase.livechat.databinding.ItemChatListBinding
 import com.ganesh.hilt.firebase.livechat.ui.BaseActivity
 import com.ganesh.hilt.firebase.livechat.ui.activity.ChatActivity
+import com.ganesh.hilt.firebase.livechat.utils.GsonUtils
 import com.ganesh.hilt.firebase.livechat.utils.formatTimeFromMillis
-import com.google.gson.Gson
 
 class UserListAdapter(private val baseActivity: BaseActivity) :
     RecyclerView.Adapter<UserListAdapter.UserViewHolder>() {
@@ -92,7 +92,7 @@ class UserListAdapter(private val baseActivity: BaseActivity) :
 
             holder.itemView.setOnClickListener {
                 val intent = Intent(baseActivity, ChatActivity::class.java)
-                intent.putExtra("receiverUserData", Gson().toJson(user))
+                intent.putExtra("receiverUserData", GsonUtils.modelToJson(user))
                 baseActivity.startActivity(intent)
             }
         }

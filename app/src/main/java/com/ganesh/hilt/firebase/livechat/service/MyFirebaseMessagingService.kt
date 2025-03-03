@@ -15,9 +15,9 @@ import com.ganesh.hilt.firebase.livechat.R
 import com.ganesh.hilt.firebase.livechat.data.User
 import com.ganesh.hilt.firebase.livechat.repo.UserRepositoryEntryPoint
 import com.ganesh.hilt.firebase.livechat.ui.activity.ChatListActivity
+import com.ganesh.hilt.firebase.livechat.utils.GsonUtils
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -59,7 +59,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             Log.d("TAG_message", "Message Data:senderUserModel $senderUserModel")
 
             if (senderUserModel.isEmpty()) return
-            val senderUser = Gson().fromJson(senderUserModel, User::class.java)
+            val senderUser = GsonUtils.jsonToModel(senderUserModel, User::class.java)
 
             userRepository.getMyUserUpdates() { currentUser ->
                 Log.d("TAG_message", "getViewModel: userName " + currentUser.name)
@@ -134,7 +134,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val replyIntent = Intent(this, ReplyReceiver::class.java).apply {
             action = "Reply_to_user"
             putExtra("notificationId", notificationId)
-            putExtra("senderUserModel", Gson().toJson(senderUser))
+            putExtra("senderUserModel", GsonUtils.modelToJson(senderUser))
         }
 
         val replyPendingIntent = PendingIntent.getBroadcast(
@@ -156,7 +156,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val markAsReadIntent = Intent(this, ReplyReceiver::class.java).apply {
             action = "MARK_AS_READ"
             putExtra("notificationId", notificationId)
-            putExtra("senderUserModel", Gson().toJson(senderUser))
+            putExtra("senderUserModel", GsonUtils.modelToJson(senderUser))
         }
         val markAsReadPendingIntent = PendingIntent.getBroadcast(
             this,
