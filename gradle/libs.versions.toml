@@ -1,11 +1,15 @@
 [versions]
 agp = "8.8.1"
+firebaseAnalytics = "22.3.0"
+firebaseCrashlytics = "19.4.1"
+googleAuthLibraryOauth2Http = "1.21.0"
 gson = "2.11.0"
 hiltAndroid = "2.51.1"
 hiltCompiler = "2.51.1"
 kotlin = "2.1.0"
 hiltVersion = "2.51.1"
 firebaseVersion = "4.4.2"
+crashlyticsVersion = "3.0.3"
 coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -17,6 +21,7 @@ material = "1.12.0"
 activity = "1.9.3"
 constraintlayout = "2.2.0"
 glide = "4.16.0"
+okhttp = "4.9.3"
 sdpAndroid = "1.1.1"
 swiperefreshlayout = "1.1.0"
 firebaseAuthKtx = "23.2.0"
@@ -29,6 +34,9 @@ volley = "1.2.1"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics", version.ref = "firebaseAnalytics" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version.ref = "firebaseCrashlytics" }
+google-auth-library-oauth2-http = { module = "com.google.auth:google-auth-library-oauth2-http", version.ref = "googleAuthLibraryOauth2Http" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hiltCompiler" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
@@ -41,6 +49,7 @@ material = { group = "com.google.android.material", name = "material", version.r
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 sdp-android = { module = "com.intuit.sdp:sdp-android", version.ref = "sdpAndroid" }
 androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
@@ -55,4 +64,5 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hiltVersion" }
 firebase-service = { id = "com.google.gms.google-services", version.ref = "firebaseVersion" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlyticsVersion" }
 

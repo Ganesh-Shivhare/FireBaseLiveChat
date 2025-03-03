@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.firebase.service) // Firebase
+    alias(libs.plugins.firebase.crashlytics) // Firebase Crashlytics)
     id 'kotlin-kapt'
 }
 
@@ -101,6 +102,10 @@ dependencies {
     implementation libs.androidx.lifecycle.viewmodel.ktx
     implementation libs.kotlinx.coroutines.android
 
-    implementation("com.google.auth:google-auth-library-oauth2-http:1.21.0") // OAuth 2.0 Auth
-    implementation("com.squareup.okhttp3:okhttp:4.9.3") // HTTP Requests
+    implementation libs.google.auth.library.oauth2.http // OAuth 2.0 Auth
+    implementation libs.okhttp // HTTP Requests
+
+    // Firebase Crashlytics & Analytics
+    implementation libs.firebase.crashlytics
+    implementation libs.firebase.analytics
 }
