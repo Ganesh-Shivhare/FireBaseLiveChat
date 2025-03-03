@@ -4,13 +4,13 @@ import android.app.Application
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.ganesh.hilt.firebase.livechat.MyApplication
 import com.ganesh.hilt.firebase.livechat.repo.UserRepositoryEntryPoint
+import com.ganesh.hilt.firebase.livechat.utils.Debug
 import com.ganesh.hilt.firebase.livechat.utils.PreferenceClass
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.EntryPointAccessors
@@ -35,14 +35,14 @@ class UserStatusService : LifecycleService() {
         ProcessLifecycleOwner.get().lifecycle.addObserver(object : DefaultLifecycleObserver {
             override fun onCreate(owner: LifecycleOwner) {
                 super.onCreate(owner)
-                Log.d("TAG_UserStatusService", "onCreate: ")
+                Debug.d("TAG_UserStatusService", "onCreate: ")
                 val notificationManager =
                     getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                 notificationManager.cancelAll()
             }
 
             override fun onStart(owner: LifecycleOwner) {
-                Log.d("TAG_UserStatusService", "onStart: ")
+                Debug.d("TAG_UserStatusService", "onStart: ")
                 // Mark user online when app is active
                 userRepository.updateUserStatus("online", fcmToken)
 
@@ -52,13 +52,13 @@ class UserStatusService : LifecycleService() {
             }
 
             override fun onStop(owner: LifecycleOwner) {
-                Log.d("TAG_UserStatusService", "onStop: ")
+                Debug.d("TAG_UserStatusService", "onStop: ")
                 // Mark user offline when app is in the background
                 userRepository.updateUserStatus("offline", fcmToken)
             }
 
             override fun onDestroy(owner: LifecycleOwner) {
-                Log.d("TAG_UserStatusService", "onDestroy: ")
+                Debug.d("TAG_UserStatusService", "onDestroy: ")
                 // Mark user offline when app is in the background
                 userRepository.updateUserStatus("offline", fcmToken)
             }
@@ -67,7 +67,7 @@ class UserStatusService : LifecycleService() {
 
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
-        Log.d("TAG_UserStatusService", "onTaskRemoved: ")
+        Debug.d("TAG_UserStatusService", "onTaskRemoved: ")
         // Mark user offline when app is in the background
         userRepository.updateUserStatus("offline", fcmToken)
     }

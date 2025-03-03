@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.core.content.ContextCompat
@@ -22,6 +21,7 @@ import com.ganesh.hilt.firebase.livechat.data.User
 import com.ganesh.hilt.firebase.livechat.databinding.ActivityChatBinding
 import com.ganesh.hilt.firebase.livechat.ui.BaseActivity
 import com.ganesh.hilt.firebase.livechat.ui.adapter.MessageListAdapter
+import com.ganesh.hilt.firebase.livechat.utils.Debug
 import com.ganesh.hilt.firebase.livechat.utils.GsonUtils
 import com.ganesh.hilt.firebase.livechat.utils.formatDateTimeFromMillis
 import com.ganesh.hilt.firebase.livechat.utils.toReadableDate
@@ -122,7 +122,7 @@ class ChatActivity : BaseActivity() {
                     if (firstVisiblePosition != RecyclerView.NO_POSITION) {
                         val topMessage = messageListAdapter.messageList[firstVisiblePosition]
                         val newDate = topMessage.timestamp.toReadableDate()
-                        Log.d("TAG_date", "onScrolled: $newDate")
+                        Debug.d("TAG_date", "onScrolled: $newDate")
                         tvDateTime.text = newDate // Update your floating date header
 
                         if (!animationStarted && !tvDateTime.isVisible && firstVisiblePosition != 0) {
@@ -176,7 +176,7 @@ class ChatActivity : BaseActivity() {
         }
 
         chatViewModel.getMessages(receiverUserData.uid) {
-            Log.d("TAG_message", "setupObservers: " + it.size)
+            Debug.d("TAG_message", "setupObservers: " + it.size)
             messageListAdapter.updateUserList(it)
             binding.tvDateTime.isVisible = it.isNotEmpty()
 
@@ -198,7 +198,7 @@ class ChatActivity : BaseActivity() {
 
         // Observe User Status Changes
         userDetailViewModel.userStatus.observe(this) { userStatus ->
-            Log.d("UserStatus", "User is ${GsonUtils.modelToJson(userStatus)}")
+            Debug.d("UserStatus", "User is ${GsonUtils.modelToJson(userStatus)}")
             if (userStatus.lastSeen > 0) {
                 binding.tvStatus.isVisible = true
 

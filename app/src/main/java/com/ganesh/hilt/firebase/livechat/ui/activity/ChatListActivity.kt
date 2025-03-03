@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import com.ganesh.hilt.firebase.livechat.data.User
@@ -13,6 +12,7 @@ import com.ganesh.hilt.firebase.livechat.databinding.ActivityChatListBinding
 import com.ganesh.hilt.firebase.livechat.ui.BaseActivity
 import com.ganesh.hilt.firebase.livechat.ui.adapter.UserListAdapter
 import com.ganesh.hilt.firebase.livechat.utils.CheckPermissions
+import com.ganesh.hilt.firebase.livechat.utils.Debug
 import com.ganesh.hilt.firebase.livechat.utils.GsonUtils
 import com.ganesh.hilt.firebase.livechat.utils.PreferenceClass
 import com.ganesh.hilt.firebase.livechat.utils.hideKeyboard
@@ -38,7 +38,7 @@ class ChatListActivity : BaseActivity() {
         val sharedPreferences = PreferenceClass(this)
 
         viewModel.fcmToken.observe(this) { token ->
-            Log.d("TAG_userToken", "setupObservers: $token")
+            Debug.d("TAG_userToken", "setupObservers: $token")
             sharedPreferences.setPrefValue("fcmToken", token)
         }
 
@@ -49,9 +49,9 @@ class ChatListActivity : BaseActivity() {
         userDetailViewModel.getCurrentlyChatsUsers()
 
         userDetailViewModel.searchResults.observe(this) { userList ->
-            Log.d("TAG_searchResults", "setupObservers: " + userList.size)
+            Debug.d("TAG_searchResults", "setupObservers: " + userList.size)
             userList.forEach {
-                Log.d("TAG_searchResults", "setupObservers: " + GsonUtils.modelToJson(it))
+                Debug.d("TAG_searchResults", "setupObservers: " + GsonUtils.modelToJson(it))
             }
             binding.rvChatList.isVisible =
                 userList.isNotEmpty() && binding.etSearch.text.trim().isEmpty()
@@ -59,9 +59,9 @@ class ChatListActivity : BaseActivity() {
         }
 
         userDetailViewModel.currentlyChatsUsers.observe(this) { chatList ->
-            Log.d("TAG_currentUsers", "setupObservers: " + chatList.size)
+            Debug.d("TAG_currentUsers", "setupObservers: " + chatList.size)
             chatList.forEach {
-                Log.d("TAG_currentUsers", "setupObservers: " + it.chatMessage.message)
+                Debug.d("TAG_currentUsers", "setupObservers: " + it.chatMessage.message)
             }
 
             chatList.sortWith { chat1, chat2 ->

@@ -2,7 +2,6 @@ package com.ganesh.hilt.firebase.livechat.ui.adapter
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -14,6 +13,7 @@ import com.ganesh.hilt.firebase.livechat.data.User
 import com.ganesh.hilt.firebase.livechat.databinding.ItemChatListBinding
 import com.ganesh.hilt.firebase.livechat.ui.BaseActivity
 import com.ganesh.hilt.firebase.livechat.ui.activity.ChatActivity
+import com.ganesh.hilt.firebase.livechat.utils.Debug
 import com.ganesh.hilt.firebase.livechat.utils.GsonUtils
 import com.ganesh.hilt.firebase.livechat.utils.formatTimeFromMillis
 
@@ -39,7 +39,7 @@ class UserListAdapter(private val baseActivity: BaseActivity) :
 
             tvUserName.text = user.name
 
-            Log.d("TAG_avatarImagePath", "onBindViewHolder: " + user.chatMessage.message)
+            Debug.d("TAG_avatarImagePath", "onBindViewHolder: " + user.chatMessage.message)
 
             Glide.with(ivProfilePic).load(user.avatarImagePath).placeholder(R.drawable.ic_profile)
                 .into(ivProfilePic)

@@ -1,8 +1,8 @@
 package com.ganesh.hilt.firebase.livechat.repo
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.ganesh.hilt.firebase.livechat.utils.Debug
 import com.google.firebase.messaging.FirebaseMessaging
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -16,7 +16,7 @@ class FirebaseRepository @Inject constructor(private val firebaseMessaging: Fire
             if (task.isSuccessful) {
                 tokenLiveData.value = task.result
             } else {
-                Log.e("FirebaseRepository", "Fetching FCM token failed", task.exception)
+                Debug.e("FirebaseRepository", "Fetching FCM token failed  ${task.exception}")
             }
         }
         return tokenLiveData
