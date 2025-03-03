@@ -2,21 +2,21 @@ package com.ganesh.hilt.firebase.livechat.ui.activity
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
-import com.ganesh.hilt.firebase.livechat.R
 import com.ganesh.hilt.firebase.livechat.data.User
 import com.ganesh.hilt.firebase.livechat.databinding.ActivityChatListBinding
 import com.ganesh.hilt.firebase.livechat.ui.BaseActivity
 import com.ganesh.hilt.firebase.livechat.ui.adapter.UserListAdapter
+import com.ganesh.hilt.firebase.livechat.utils.CheckPermissions
+import com.ganesh.hilt.firebase.livechat.utils.GsonUtils
+import com.ganesh.hilt.firebase.livechat.utils.PreferenceClass
 import com.ganesh.hilt.firebase.livechat.utils.hideKeyboard
 import com.ganesh.hilt.firebase.livechat.viewModel.FirebaseViewModel
-import com.google.gson.Gson
 
 class ChatListActivity : BaseActivity() {
 
@@ -35,13 +35,11 @@ class ChatListActivity : BaseActivity() {
         initView()
         setupObservers()
 
-        val sharedPreferences: SharedPreferences =
-            getSharedPreferences(getString(R.string.app_name), MODE_PRIVATE);
-        val editor: SharedPreferences.Editor = sharedPreferences.edit();
+        val sharedPreferences = PreferenceClass(this)
 
         viewModel.fcmToken.observe(this) { token ->
             Log.d("TAG_userToken", "setupObservers: $token")
-            editor.putString("fcmToken", token).apply()
+            sharedPreferences.setPrefValue("fcmToken", token)
         }
 
         viewModel.fetchToken()
@@ -53,7 +51,7 @@ class ChatListActivity : BaseActivity() {
         userDetailViewModel.searchResults.observe(this) { userList ->
             Log.d("TAG_searchResults", "setupObservers: " + userList.size)
             userList.forEach {
-                Log.d("TAG_searchResults", "setupObservers: " + Gson().toJson(it))
+                Log.d("TAG_searchResults", "setupObservers: " + GsonUtils.modelToJson(it))
             }
             binding.rvChatList.isVisible =
                 userList.isNotEmpty() && binding.etSearch.text.trim().isEmpty()
@@ -116,6 +114,15 @@ class ChatListActivity : BaseActivity() {
                 etSearch.setText("")
                 etSearch.hideKeyboard()
             }
+
+            permissionUtils.askForPermission(
+                notificationPermissionList,
+                showDialog = true,
+                object : CheckPermissions {
+                    override fun allowedPermissions(allowed: Boolean) {
+
+                    }
+                })
         }
     }
 }

@@ -6,14 +6,13 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
 import androidx.core.app.RemoteInput
 import com.ganesh.hilt.firebase.livechat.MyApplication
-import com.ganesh.hilt.firebase.livechat.R
 import com.ganesh.hilt.firebase.livechat.data.ChatMessage
 import com.ganesh.hilt.firebase.livechat.data.User
 import com.ganesh.hilt.firebase.livechat.repo.ChatRepositoryEntryPoint
-import com.google.gson.Gson
+import com.ganesh.hilt.firebase.livechat.utils.GsonUtils
+import com.ganesh.hilt.firebase.livechat.utils.PreferenceClass
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.EntryPointAccessors
 
@@ -39,7 +38,7 @@ class ReplyReceiver : BroadcastReceiver() {
         notificationManager.cancelAll()
 
         if (senderUserModel.isEmpty()) return
-        val senderUser = Gson().fromJson(senderUserModel, User::class.java)
+        val senderUser = GsonUtils.jsonToModel(senderUserModel, User::class.java)
 
         if (intent.action == "MARK_AS_READ") {
             var markAsRead = false
@@ -49,6 +48,7 @@ class ReplyReceiver : BroadcastReceiver() {
             chatRepository.getMessages(senderUser.uid) {
                 if (!markAsRead) {
                     markAsRead = true
+                    Log.d("TAG_message", "onReceive:uid ${it.size}")
                     chatRepository.changeMessageStatus(senderUser.uid, 2, it)
                 }
             }
@@ -64,12 +64,11 @@ class ReplyReceiver : BroadcastReceiver() {
 
                 // Manually get ViewModel using Hilt EntryPoint
                 val myUserProfile =
-                    context.getSharedPreferences(context.getString(R.string.app_name), MODE_PRIVATE)
-                        .getString("my_profile_data", "")
+                    PreferenceClass(context).getPrefValue("my_profile_data", "").toString()
 
                 Log.d("TAG_message", "onReceive:myUserProfile $myUserProfile")
-                if (myUserProfile.isNullOrEmpty()) return
-                val myUser = Gson().fromJson(myUserProfile, User::class.java)
+                if (myUserProfile.isEmpty()) return
+                val myUser = GsonUtils.jsonToModel(myUserProfile, User::class.java)
                 chatRepository.sendMessage(myUser, senderUser, replyText)
 
                 val chatMessageList = ArrayList<ChatMessage>().apply { add(senderUser.chatMessage) }

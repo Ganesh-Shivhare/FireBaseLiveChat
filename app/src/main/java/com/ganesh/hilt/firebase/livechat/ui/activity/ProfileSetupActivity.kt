@@ -12,9 +12,9 @@ import com.ganesh.hilt.firebase.livechat.data.User
 import com.ganesh.hilt.firebase.livechat.databinding.ActivityProfileSetupBinding
 import com.ganesh.hilt.firebase.livechat.ui.BaseActivity
 import com.ganesh.hilt.firebase.livechat.ui.dialog.AvatarSelectionDialog
+import com.ganesh.hilt.firebase.livechat.utils.GsonUtils
 import com.ganesh.hilt.firebase.livechat.utils.getAvatarImageList
 import com.ganesh.hilt.firebase.livechat.viewModel.FirebaseViewModel
-import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -47,7 +47,7 @@ class ProfileSetupActivity : BaseActivity() {
 
         val updateUserProfileData = intent.getStringExtra("updateUserProfile").toString()
         if (updateUserProfileData.isNotEmpty()) {
-            updateUserProfile = Gson().fromJson(updateUserProfileData, User::class.java)
+            updateUserProfile = GsonUtils.jsonToModel(updateUserProfileData, User::class.java)
 
             binding.btnSaveProfile.text = "Update Profile"
         } else {
@@ -57,7 +57,7 @@ class ProfileSetupActivity : BaseActivity() {
         }
 
         viewModel.fcmToken.observe(this) { token ->
-            editor.putString("fcmToken", token).apply()
+            preferenceClass.setPrefValue("fcmToken", token)
         }
 
         binding.btnSaveProfile.setOnClickListener { saveUserProfile() }
@@ -103,7 +103,7 @@ class ProfileSetupActivity : BaseActivity() {
 
         userDetailViewModel.myUserProfile.observe(this) { result ->
             result.onSuccess {
-                Log.d("TAG_dataInserted", "onSuccess: " + Gson().toJson(it))
+                Log.d("TAG_dataInserted", "onSuccess: " + GsonUtils.modelToJson(it))
                 startActivity(Intent(
                     this@ProfileSetupActivity, ChatListActivity::class.java
                 ).apply { addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK) })
@@ -134,7 +134,7 @@ class ProfileSetupActivity : BaseActivity() {
         }
 
         val user = User(userId, name, phoneNumber, email, avatarImagePath)
-        user.userToken = sharedPreferences.getString("fcmToken", "") ?: ""
+        user.userToken = preferenceClass.getPrefValue("fcmToken", "").toString()
 
         userDetailViewModel.insertUserData(user)
     }

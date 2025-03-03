@@ -6,7 +6,7 @@ import android.util.Log
 import android.widget.Toast
 import com.ganesh.hilt.firebase.livechat.databinding.ActivityFirstBinding
 import com.ganesh.hilt.firebase.livechat.ui.BaseActivity
-import com.google.gson.Gson
+import com.ganesh.hilt.firebase.livechat.utils.GsonUtils
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -55,8 +55,8 @@ class FirstActivity : BaseActivity() {
 
         userDetailViewModel.myUserProfile.observe(this) { result ->
             result.onSuccess {
-                Log.d("TAG_message", "setupObservers:111 "+Gson().toJson(it))
-                editor.putString("my_profile_data", Gson().toJson(it)).apply()
+                Log.d("TAG_message", "setupObservers:111 " + GsonUtils.modelToJson(it))
+                preferenceClass.setPrefValue("my_profile_data", GsonUtils.modelToJson(it))
             }.onFailure {
 
             }

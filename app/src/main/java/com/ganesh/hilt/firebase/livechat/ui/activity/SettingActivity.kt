@@ -8,7 +8,7 @@ import com.ganesh.hilt.firebase.livechat.data.User
 import com.ganesh.hilt.firebase.livechat.databinding.ActivitySettingBinding
 import com.ganesh.hilt.firebase.livechat.ui.BaseActivity
 import com.ganesh.hilt.firebase.livechat.utils.DialogHelper
-import com.google.gson.Gson
+import com.ganesh.hilt.firebase.livechat.utils.GsonUtils
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -41,7 +41,7 @@ class SettingActivity : BaseActivity() {
             tvEditProfile.setOnClickListener {
                 if (::currentUserData.isInitialized) {
                     val intent = Intent(this@SettingActivity, ProfileSetupActivity::class.java)
-                    intent.putExtra("updateUserProfile", Gson().toJson(currentUserData))
+                    intent.putExtra("updateUserProfile", GsonUtils.modelToJson(currentUserData))
                     startActivity(intent)
                 }
             }

@@ -4,22 +4,21 @@ import android.app.Application
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.ganesh.hilt.firebase.livechat.MyApplication
-import com.ganesh.hilt.firebase.livechat.R
 import com.ganesh.hilt.firebase.livechat.repo.UserRepositoryEntryPoint
+import com.ganesh.hilt.firebase.livechat.utils.PreferenceClass
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.EntryPointAccessors
 
 @AndroidEntryPoint
 class UserStatusService : LifecycleService() {
-    private val sharedPreferences: SharedPreferences by lazy {
-        getSharedPreferences(getString(R.string.app_name), MODE_PRIVATE)
+    private val preferenceClass: PreferenceClass by lazy {
+        PreferenceClass(this)
     }
     private val userRepository by lazy {
         EntryPointAccessors.fromApplication(
@@ -27,8 +26,8 @@ class UserStatusService : LifecycleService() {
             UserRepositoryEntryPoint::class.java
         ).getUserRepository()
     }
-    private val fcmToken by lazy {
-        sharedPreferences.getString("fcmToken", "") ?: ""
+    private val fcmToken: String by lazy {
+        preferenceClass.getPrefValue("fcmToken", "").toString()
     }
 
     override fun onCreate() {
