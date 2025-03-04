@@ -53,7 +53,7 @@
             android:configChanges="uiMode|screenSize"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.HiltFirebaseLiveChat">
+            android:theme="@style/Theme.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

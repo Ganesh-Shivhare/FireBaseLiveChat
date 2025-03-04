@@ -1,6 +1,7 @@
 package com.ganesh.hilt.firebase.livechat.ui.activity
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -23,13 +24,13 @@ class FirstActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(binding.root)
         installSplashScreen()
+        if (Build.VERSION.SDK_INT < 31) setContentView(binding.root)
 
         // Set up an OnPreDrawListener to the root view.
         val content: View = findViewById(android.R.id.content)
-        content.getViewTreeObserver().addOnPreDrawListener(
-            object : ViewTreeObserver.OnPreDrawListener {
+        content.getViewTreeObserver()
+            .addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
                 override fun onPreDraw(): Boolean {
                     // Check if the initial data is ready.
                     if (finishSplashScreen) {
