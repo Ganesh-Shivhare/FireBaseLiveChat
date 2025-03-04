@@ -1,5 +1,6 @@
 [versions]
 agp = "8.8.1"
+coreSplashscreen = "1.0.1"
 firebaseAnalytics = "22.3.0"
 firebaseCrashlytics = "19.4.1"
 googleAuthLibraryOauth2Http = "1.21.0"
@@ -33,6 +34,7 @@ volley = "1.2.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics", version.ref = "firebaseAnalytics" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version.ref = "firebaseCrashlytics" }

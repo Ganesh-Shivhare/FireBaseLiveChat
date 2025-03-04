@@ -1,0 +1,13 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="Theme.MySplashScreen" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#383839</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="android:windowSplashScreenBrandingImage">@drawable/branding_image</item>
+        <item name="postSplashScreenTheme">@style/Theme.HiltFirebaseLiveChat</item>
+    </style>
+
+    <style name="Theme.HiltFirebaseLiveChat" parent="Base.Theme.HiltFirebaseLiveChat">
+        <item name="android:windowBackground">@color/black</item>
+    </style>
+</resources>

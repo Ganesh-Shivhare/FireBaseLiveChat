@@ -3,12 +3,15 @@ package com.ganesh.hilt.firebase.livechat.ui
 import android.Manifest.permission.POST_NOTIFICATIONS
 import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.ganesh.hilt.firebase.livechat.service.UserStatusService
 import com.ganesh.hilt.firebase.livechat.utils.PermissionUtils
 import com.ganesh.hilt.firebase.livechat.utils.PreferenceClass
+import com.ganesh.hilt.firebase.livechat.utils.isMyServiceRunning
 import com.ganesh.hilt.firebase.livechat.viewModel.ChatViewModel
 import com.ganesh.hilt.firebase.livechat.viewModel.LoginViewModel
 import com.ganesh.hilt.firebase.livechat.viewModel.UserDetailViewModel
@@ -41,6 +44,10 @@ open class BaseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         notificationManager.cancelAll()
+
+        if (!UserStatusService::class.java.isMyServiceRunning(this)) {
+            startService(Intent(this, UserStatusService::class.java))
+        }
     }
 
     override fun onResume() {

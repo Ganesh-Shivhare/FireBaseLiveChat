@@ -52,7 +52,8 @@
             android:name=".ui.activity.FirstActivity"
             android:configChanges="uiMode|screenSize"
             android:exported="true"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.HiltFirebaseLiveChat">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -150,8 +150,8 @@ class LoginActivity : BaseActivity() {
             Debug.d("TAG_test", "googleSignInLauncher:isComplete " + task.isComplete)
             Debug.d("TAG_test", "googleSignInLauncher:isCanceled " + task.isCanceled)
             Debug.d("TAG_test", "googleSignInLauncher:isSuccessful " + task.isSuccessful)
-            Debug.d("TAG_test", "googleSignInLauncher: " + task.result?.idToken)
             task.result?.idToken?.let {
+                Debug.d("TAG_test", "googleSignInLauncher: $it")
                 loginViewModel.loginWithGoogle(it)
             }
         }

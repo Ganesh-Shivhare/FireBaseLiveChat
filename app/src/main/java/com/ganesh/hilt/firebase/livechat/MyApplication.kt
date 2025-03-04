@@ -16,7 +16,5 @@ class MyApplication : Application() {
         super.onCreate()
         // Register lifecycle observer
         myApplication = this
-
-        startService(Intent(this, UserStatusService::class.java))
     }
 }
