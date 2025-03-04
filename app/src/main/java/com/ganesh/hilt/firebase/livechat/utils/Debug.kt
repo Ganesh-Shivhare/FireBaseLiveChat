@@ -16,7 +16,7 @@ object Debug {
         }
     }
 
-    fun showtext(msg: String, textView: TextView) {
+    fun showText(msg: String, textView: TextView) {
         if (debugApp) {
             textView.text = "" + msg
         }
@@ -47,7 +47,7 @@ object Debug {
     }
 
 
-    fun PrintException(e: Exception) {
+    fun printException(e: Exception) {
         if (debugApp) {
             d("LocalBaseActivity", "PrintException: " + e.message)
             e.printStackTrace()
