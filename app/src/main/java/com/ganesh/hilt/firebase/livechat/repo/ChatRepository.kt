@@ -124,7 +124,7 @@ class ChatRepository @Inject constructor(
                 val body = payload.toString().toRequestBody(mediaType)
 
                 val request = Request.Builder()
-                    .url("https://fcm.googleapis.com/v1/projects/hiltfirebaselivechat/messages:send") // Replace with your Firebase Project ID
+                    .url("https://fcm.googleapis.com/v1/projects/826230996821/messages:send") // Replace with your Firebase Project ID
                     .post(body).addHeader("Content-Type", "application/json")
                     .addHeader("Authorization", "Bearer $accessToken").build()
 

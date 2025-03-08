@@ -146,13 +146,19 @@ class LoginActivity : BaseActivity() {
 
     private val googleSignInLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-            Debug.d("TAG_test", "googleSignInLauncher:isComplete " + task.isComplete)
-            Debug.d("TAG_test", "googleSignInLauncher:isCanceled " + task.isCanceled)
-            Debug.d("TAG_test", "googleSignInLauncher:isSuccessful " + task.isSuccessful)
-            task.result?.idToken?.let {
-                Debug.d("TAG_test", "googleSignInLauncher: $it")
-                loginViewModel.loginWithGoogle(it)
+            try {
+                result.data?.let { intent ->
+                    val task = GoogleSignIn.getSignedInAccountFromIntent(intent)
+                    Debug.d("TAG_test", "googleSignInLauncher:isComplete " + task.isComplete)
+                    Debug.d("TAG_test", "googleSignInLauncher:isCanceled " + task.isCanceled)
+                    Debug.d("TAG_test", "googleSignInLauncher:isSuccessful " + task.isSuccessful)
+                    task.result?.idToken?.let {
+                        Debug.d("TAG_test", "googleSignInLauncher: $it")
+                        loginViewModel.loginWithGoogle(it)
+                    }
+                }
+            } catch (e: Exception) {
+                Debug.d("TAG_test", "googleSignInLauncher:error ${e.message}")
             }
         }
 
