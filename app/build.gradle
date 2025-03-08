@@ -13,10 +13,10 @@ android {
 
     signingConfigs {
         release {
-            storeFile file('/Users/sujal/Desktop/Workspace/TestData/JKS/TheFashionBon.jks')
-            storePassword 'TheFashionBon'
-            keyAlias 'TheFashionBon'
-            keyPassword 'TheFashionBon'
+            storeFile file('/Users/sujal/Desktop/Workspace/TestData/JKS/LiveChat.jks')
+            storePassword '123456'
+            keyAlias 'livechat'
+            keyPassword '123456'
         }
     }
 
